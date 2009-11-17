@@ -1,7 +1,6 @@
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
    Modeling & Simulation's Perspective ~ Chapter 3: Events, Notifications, and
    Callbacks. */
-
 #ifndef BASENOTIFIEE_H_SZV7FZSO
 #define BASENOTIFIEE_H_SZV7FZSO
 
