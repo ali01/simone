@@ -4,6 +4,7 @@
 
 #ifndef PTRINTERFACE_H_VGPMQRTI
 #define PTRINTERFACE_H_VGPMQRTI
+#include "../globals.h"
 
 namespace Simone {
 

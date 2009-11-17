@@ -45,9 +45,11 @@ public:
    const T& front() const { return vector_.front(); }
    const T& back() const { return vector_.back(); }
    
+   iterator elementDel(iterator it) { return vector_.erase(it); }
    void elementIs(uint32_t _i, const T& _e) { vector_[_i] = _e; }
    void enqueueBack(const T& _e) { vector_.push_back(_e); }
    void popBack() { vector_.pop_back(); }
+   void clear() { vector_.clear(); }
    
    T& operator[](const uint32_t& _i) { return vector_[_i]; }
    const T& operator[](const uint32_t& _i) const { return vector_[_i]; }

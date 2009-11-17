@@ -5,18 +5,22 @@
 #ifndef NUMERIC_H_96GBE836
 #define NUMERIC_H_96GBE836
 
+#include <sstream>
 #include <ostream>
 #include <limits>
+#include <string>
 
 namespace Simone {
+using std::stringstream;
 using std::ostream;
 using std::numeric_limits;
+using std::string;
 
 template<typename UnitType, typename RepType>
 class Numeric {
 public:
    // # allocation ===================================================================
-   Numeric()           { valueIs(0); }
+   Numeric()          { valueIs(0); }
    Numeric(RepType v) { valueIs(v); }
    Numeric(const Numeric<UnitType,RepType>& v) { valueIs(v.value_); }
    virtual ~Numeric() {}
@@ -26,10 +30,13 @@ public:
             operator= (const Numeric<UnitType,RepType>& v);
    
    // # member functions =============================================================
-   RepType     value() const { return value_; }
+   RepType value() const { return value_; }
    // # arithmetic operators =========================================================
    // # summation
-   const RepType operator+ (const Numeric<UnitType,RepType>& v) const;
+   RepType operator+ (const Numeric<UnitType,RepType>& v) const {
+      return value_ + v.value_;
+   }
+   
    const Numeric<UnitType,RepType>&
             operator++();
    // const Numeric<UnitType,RepType>&
@@ -91,11 +98,14 @@ public:
       #endif
    }
    
-   // const string   str()   const;
-   // const char    *c_str() const      { return str().c_str(); }
-   
    friend ostream& operator<<(ostream& out, const Numeric<UnitType,RepType>& _n) {
       return out << _n.value_;
+   }
+   
+   virtual const string str() const {
+      stringstream ss;
+      ss << *this;
+      return ss.str();
    }
 protected:
    // # member functions =============================================================
@@ -115,11 +125,6 @@ Numeric<UnitType,RepType>::operator=(const Numeric<UnitType,RepType>& v) {
 
 // # arithmetic operators ============================================================
 // # summation -----------------------------------------------------------------------
-template<typename UnitType, typename RepType>
-inline const RepType
-Numeric<UnitType,RepType>::operator+(const Numeric<UnitType,RepType>& v) const {
-   return Numeric<UnitType,RepType>(value_ + v.value_).value();
-}
 
 template<typename UnitType, typename RepType>
 inline const Numeric<UnitType,RepType>& Numeric<UnitType,RepType>::operator++() {
