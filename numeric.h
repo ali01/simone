@@ -6,236 +6,259 @@
 #define NUMERIC_H_96GBE836
 
 #include <ostream>
+#include <limits>
 
 namespace Simone {
 using std::ostream;
+using std::numeric_limits;
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 class Numeric {
 public:
    // # allocation ===================================================================
    Numeric()           { valueIs(0); }
-   Numeric(BaseType v) { valueIs(v); }
-   Numeric(const Numeric<UnitType,BaseType>& v) { valueIs(v.value_); }
+   Numeric(RepType v) { valueIs(v); }
+   Numeric(const Numeric<UnitType,RepType>& v) { valueIs(v.value_); }
    virtual ~Numeric() {}
    
    // # assignment operator ----------------------------------------------------------
-   const Numeric<UnitType,BaseType>&
-            operator= (const Numeric<UnitType,BaseType>& v);
+   const Numeric<UnitType,RepType>&
+            operator= (const Numeric<UnitType,RepType>& v);
    
    // # member functions =============================================================
-   BaseType     value() const { return value_; }
+   RepType     value() const { return value_; }
    // # arithmetic operators =========================================================
    // # summation
-   const BaseType operator+ (const Numeric<UnitType,BaseType>& v) const;
-   const Numeric<UnitType,BaseType>&
+   const RepType operator+ (const Numeric<UnitType,RepType>& v) const;
+   const Numeric<UnitType,RepType>&
             operator++();
-   // const Numeric<UnitType,BaseType>&
+   // const Numeric<UnitType,RepType>&
    //          operator++(int);
-   const Numeric<UnitType,BaseType>&
-            operator+=(const Numeric<UnitType,BaseType>& v);
+   const Numeric<UnitType,RepType>&
+            operator+=(const Numeric<UnitType,RepType>& v);
    
    // # subtraction
-   // friend const Numeric<UnitType,BaseType> // unary minus
-   //          operator-(const Numeric<UnitType,BaseType>& v);
-   const BaseType operator- (const Numeric<UnitType,BaseType>& v) const;
+   // friend const Numeric<UnitType,RepType> // unary minus
+   //          operator-(const Numeric<UnitType,RepType>& v);
+   const RepType operator- (const Numeric<UnitType,RepType>& v) const;
    
-   const Numeric<UnitType,BaseType>&
+   const Numeric<UnitType,RepType>&
             operator--();
-   // const Numeric<UnitType,BaseType>&
+   // const Numeric<UnitType,RepType>&
    //          operator--(int);
-   const Numeric<UnitType,BaseType>&
-            operator-=(const Numeric<UnitType,BaseType>& v);
+   const Numeric<UnitType,RepType>&
+            operator-=(const Numeric<UnitType,RepType>& v);
    
    // # multiplication
-   const BaseType operator* (const Numeric<UnitType,BaseType>& v) const;
-   const Numeric<UnitType,BaseType>&
-            operator*=(const Numeric<UnitType,BaseType>& v);
+   const RepType operator* (const Numeric<UnitType,RepType>& v) const;
+   const Numeric<UnitType,RepType>&
+            operator*=(const Numeric<UnitType,RepType>& v);
    
    // # division
-   const BaseType operator/ (const Numeric<UnitType,BaseType>& v) const;
+   const RepType operator/ (const Numeric<UnitType,RepType>& v) const;
    
-   const Numeric<UnitType,BaseType>&
-            operator/=(const Numeric<UnitType,BaseType>& v);
+   const Numeric<UnitType,RepType>&
+            operator/=(const Numeric<UnitType,RepType>& v);
    
    // # modulus
-   const BaseType operator% (const Numeric<UnitType,BaseType>& v) const;
-   const Numeric<UnitType,BaseType>&
-            operator%=(const Numeric<UnitType,BaseType>& v);
+   const RepType operator% (const Numeric<UnitType,RepType>& v) const;
+   const Numeric<UnitType,RepType>&
+            operator%=(const Numeric<UnitType,RepType>& v);
    
    // # relational operators =========================================================
-   bool     operator==(const Numeric<UnitType,BaseType>& v) const;
-   bool     operator!=(const Numeric<UnitType,BaseType>& v) const;
-   bool     operator>=(const Numeric<UnitType,BaseType>& v) const;
-   bool     operator<=(const Numeric<UnitType,BaseType>& v) const;
-   bool     operator< (const Numeric<UnitType,BaseType>& v) const;
-   bool     operator> (const Numeric<UnitType,BaseType>& v) const;
+   bool     operator==(const Numeric<UnitType,RepType>& v) const;
+   bool     operator!=(const Numeric<UnitType,RepType>& v) const;
+   bool     operator>=(const Numeric<UnitType,RepType>& v) const;
+   bool     operator<=(const Numeric<UnitType,RepType>& v) const;
+   bool     operator< (const Numeric<UnitType,RepType>& v) const;
+   bool     operator> (const Numeric<UnitType,RepType>& v) const;
    
-   friend ostream& operator<<(ostream& out, const Numeric<UnitType,BaseType>& _n) {
+   static RepType maxValue() { 
+      #ifdef WIN32
+      #undef max
+         return numeric_limits<RepType>::max(); 
+      #else
+         return numeric_limits<RepType>::max(); 
+      #endif
+   }
+   
+   static RepType minValue() {      
+      #ifdef WIN32 
+      #undef min
+         return numeric_limits<RepType>::min(); 
+      #else
+         return numeric_limits<RepType>::min(); 
+      #endif
+   }
+   
+   // const string   str()   const;
+   // const char    *c_str() const      { return str().c_str(); }
+   
+   friend ostream& operator<<(ostream& out, const Numeric<UnitType,RepType>& _n) {
       return out << _n.value_;
    }
 protected:
    // # member functions =============================================================
-   virtual void valueIs(BaseType v) { value_ = v; }
+   virtual void valueIs(RepType v) { value_ = v; }
    // # data members =================================================================
-   BaseType value_;
+   RepType value_;
 };
 
 // # copy constructor -------------------------------------------------------------
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>& 
-Numeric<UnitType,BaseType>::operator=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>& 
+Numeric<UnitType,RepType>::operator=(const Numeric<UnitType,RepType>& v) {
    if (this != &v) { valueIs(v.value_); }
    return v;
 }
 
 // # arithmetic operators ============================================================
 // # summation -----------------------------------------------------------------------
-template<typename UnitType, typename BaseType>
-inline const BaseType
-Numeric<UnitType,BaseType>::operator+(const Numeric<UnitType,BaseType>& v) const {
-   return Numeric<UnitType,BaseType>(value_ + v.value_).value();
+template<typename UnitType, typename RepType>
+inline const RepType
+Numeric<UnitType,RepType>::operator+(const Numeric<UnitType,RepType>& v) const {
+   return Numeric<UnitType,RepType>(value_ + v.value_).value();
 }
 
-template<typename UnitType, typename BaseType>
-inline const Numeric<UnitType,BaseType>& Numeric<UnitType,BaseType>::operator++() {
+template<typename UnitType, typename RepType>
+inline const Numeric<UnitType,RepType>& Numeric<UnitType,RepType>::operator++() {
    valueIs(value_ + 1);
    return *this;
 }
 
-// template<typename UnitType, typename BaseType>
-// inline const Numeric<UnitType,BaseType>& Numeric<UnitType,BaseType>::operator++(int) {
-//    Numeric<UnitType,BaseType> prev = *this;
+// template<typename UnitType, typename RepType>
+// inline const Numeric<UnitType,RepType>& Numeric<UnitType,RepType>::operator++(int) {
+//    Numeric<UnitType,RepType> prev = *this;
 //    valueIs(value_ + 1);
 //    return prev;
 // }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>&
-Numeric<UnitType,BaseType>::operator+=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>&
+Numeric<UnitType,RepType>::operator+=(const Numeric<UnitType,RepType>& v) {
    valueIs(value_ + v.value_);
    return *this;
 }
 
 // # subtraction ---------------------------------------------------------------------
 
-// template<typename UnitType, typename BaseType>
+// template<typename UnitType, typename RepType>
 // inline const
-// Numeric<UnitType,BaseType> operator-(const Numeric<UnitType,BaseType>& v) {
-//    return Numeric<UnitType,BaseType>(-1 * v.value_);
+// Numeric<UnitType,RepType> operator-(const Numeric<UnitType,RepType>& v) {
+//    return Numeric<UnitType,RepType>(-1 * v.value_);
 // }
 
-template<typename UnitType, typename BaseType>
-inline const BaseType
-Numeric<UnitType,BaseType>::operator-(const Numeric<UnitType,BaseType>& v) const {
-   return Numeric<UnitType,BaseType>(value_ - v.value_);
+template<typename UnitType, typename RepType>
+inline const RepType
+Numeric<UnitType,RepType>::operator-(const Numeric<UnitType,RepType>& v) const {
+   return Numeric<UnitType,RepType>(value_ - v.value_);
 }
 
-template<typename UnitType, typename BaseType>
-inline const Numeric<UnitType,BaseType>& Numeric<UnitType,BaseType>::operator--() {
+template<typename UnitType, typename RepType>
+inline const Numeric<UnitType,RepType>& Numeric<UnitType,RepType>::operator--() {
    valueIs(value_ - 1);
    return *this;
 }
 
-// template<typename UnitType, typename BaseType>
-// inline const Numeric<UnitType,BaseType>& Numeric<UnitType,BaseType>::operator--(int) {
-//    Numeric<UnitType,BaseType> prev = *this;
+// template<typename UnitType, typename RepType>
+// inline const Numeric<UnitType,RepType>& Numeric<UnitType,RepType>::operator--(int) {
+//    Numeric<UnitType,RepType> prev = *this;
 //    valueIs(value_ - 1);
 //    return prev;
 // }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>&
-Numeric<UnitType,BaseType>::operator-=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>&
+Numeric<UnitType,RepType>::operator-=(const Numeric<UnitType,RepType>& v) {
    valueIs(value_ - v.value_);
    return *this;
 }
 
 // # multiplication ------------------------------------------------------------------
 
-template<typename UnitType, typename BaseType>
-inline const BaseType
-Numeric<UnitType,BaseType>::operator*(const Numeric<UnitType,BaseType>& v) const {
-   return Numeric<UnitType,BaseType>(value_ * v.value_);
+template<typename UnitType, typename RepType>
+inline const RepType
+Numeric<UnitType,RepType>::operator*(const Numeric<UnitType,RepType>& v) const {
+   return Numeric<UnitType,RepType>(value_ * v.value_);
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>&
-Numeric<UnitType,BaseType>::operator*=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>&
+Numeric<UnitType,RepType>::operator*=(const Numeric<UnitType,RepType>& v) {
    valueIs(value_ * v.value_);
    return *this;
 }
 
 // # division ------------------------------------------------------------------------
 
-template<typename UnitType, typename BaseType>
-inline const BaseType
-Numeric<UnitType,BaseType>::operator/(const Numeric<UnitType,BaseType>& v) const {
-   return Numeric<UnitType,BaseType>(value_ / v.value_);
+template<typename UnitType, typename RepType>
+inline const RepType
+Numeric<UnitType,RepType>::operator/(const Numeric<UnitType,RepType>& v) const {
+   return Numeric<UnitType,RepType>(value_ / v.value_);
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>&
-Numeric<UnitType,BaseType>::operator/=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>&
+Numeric<UnitType,RepType>::operator/=(const Numeric<UnitType,RepType>& v) {
    valueIs(value_ / v.value_);
    return *this;
 }
 
 // # modulus -------------------------------------------------------------------------
-template<typename UnitType, typename BaseType>
-inline const BaseType
-Numeric<UnitType,BaseType>::operator%(const Numeric<UnitType,BaseType>& v) const {
-   return Numeric<UnitType,BaseType>(value_ % v.value_);
+template<typename UnitType, typename RepType>
+inline const RepType
+Numeric<UnitType,RepType>::operator%(const Numeric<UnitType,RepType>& v) const {
+   return Numeric<UnitType,RepType>(value_ % v.value_);
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,BaseType>&
-Numeric<UnitType,BaseType>::operator%=(const Numeric<UnitType,BaseType>& v) {
+Numeric<UnitType,RepType>&
+Numeric<UnitType,RepType>::operator%=(const Numeric<UnitType,RepType>& v) {
    valueIs(value_ % v.value_);
    return *this;
 }
 
 // # relational operators ============================================================
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,BaseType>::operator==(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const {
    return value_ == v.value_;
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,BaseType>::operator!=(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator!=(const Numeric<UnitType,RepType>& v) const {
    return value_ != v.value_;
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,BaseType>::operator<=(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator<=(const Numeric<UnitType,RepType>& v) const {
    return value_ <= v.value_;
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,BaseType>::operator>=(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator>=(const Numeric<UnitType,RepType>& v) const {
    return value_ >= v.value_;
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,BaseType>::operator<(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator<(const Numeric<UnitType,RepType>& v) const {
    return value_ < v.value_;
 }
 
-template<typename UnitType, typename BaseType>
+template<typename UnitType, typename RepType>
 inline bool 
-Numeric<UnitType,BaseType>::operator>(const Numeric<UnitType,BaseType>& v) const {
+Numeric<UnitType,RepType>::operator>(const Numeric<UnitType,RepType>& v) const {
    return value_ > v.value_;
 }
 

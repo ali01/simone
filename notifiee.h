@@ -55,8 +55,9 @@ protected:
                                                    notifier_(_notifier),
                                                    strongly_ref_(_strong_ref) {
       if (_notifier) {
-         _notifier->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
-         if ( ! stronglyReferencing()) { notifier_->deleteRef(); }
+         Notifier *n_ = const_cast<Notifier *>(_notifier.ptr());
+         n_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
+         if ( ! stronglyReferencing()) { n_->deleteRef(); }
       }
    }
    typename Notifier::Ptr notifier_;
