@@ -26,7 +26,7 @@ public:
    
    bool stronglyReferencing() const { return strongly_ref_; }
    
-   void notifierIs(const typename Notifier::PtrConst& _n) {
+   void notifierIs(const typename Notifier::Ptr& _n) {
       if (notifier_ == _n) { return; }
       if (notifier_) {
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
