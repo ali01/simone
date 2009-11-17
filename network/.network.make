@@ -1,1 +1,0 @@
-SRCS += $(wildcard simone/network/*.$(EXT))

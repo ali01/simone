@@ -1,0 +1,1 @@
+SRCS += $(wildcard $(shell `pwd`)/*.$(EXT))
