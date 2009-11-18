@@ -38,7 +38,6 @@ public:
     operator int PointerConversion::*() const {
         return ptr_ ? &PointerConversion::valid : 0;
     }
-
 protected:
     T *ptr_;
 };
