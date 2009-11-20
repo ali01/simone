@@ -35,7 +35,7 @@ public:
       }
       if (_n) {
          notifier_ = _n;
-         notifier_->lastNotifieeIs(static_cast<typename Notifier::Notifiee*>(this));
+         notifier_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
          if ( ! stronglyReferencing()) { notifier_->deleteRef(); }
       }
    }
@@ -56,7 +56,7 @@ protected:
                                                    strongly_ref_(_strong_ref) {
       if (_notifier) {
          Notifier *n_ = const_cast<Notifier *>(_notifier.ptr());
-         n_->lastNotifieeIs(static_cast<typename Notifier::Notifiee*>(this));
+         n_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
          if ( ! stronglyReferencing()) { n_->deleteRef(); }
       }
    }
