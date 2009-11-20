@@ -23,6 +23,7 @@ public:
    
    // factory constructor ============================================================
    static Ptr MapNew() { return new Map(); }
+   Map() {}
    
    // iterators ======================================================================
    iterator               begin()        { return map_.begin();  }
@@ -50,7 +51,6 @@ public:
          ValueType& operator[](const KeyType& key)       { return map_[key]; }
    const ValueType& operator[](const KeyType& key) const { return map_[key]; }
 protected:
-   Map() {}
 private:
    // member functions ===============================================================
    // data members ===================================================================

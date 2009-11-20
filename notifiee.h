@@ -8,11 +8,11 @@
 
 namespace Simone {
 
-template <typename Notifier, typename Owner>
-class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier,Owner> > {
+template <typename Notifier>
+class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier> > {
 public:
-   typedef Ptr<const BaseNotifiee<Notifier,Owner> > PtrConst;
-   typedef Ptr<BaseNotifiee<Notifier,Owner> > Ptr;
+   typedef Ptr<const BaseNotifiee<Notifier> > PtrConst;
+   typedef Ptr<BaseNotifiee<Notifier> > Ptr;
    
    virtual ~BaseNotifiee() {
       if (notifier_) {
@@ -23,9 +23,6 @@ public:
    
    typename Notifier::PtrConst notifier() const { return notifier_; }
    typename Notifier::Ptr      notifier()       { return notifier_; }
-   
-   typename Owner             *owner() const { return owner_; }
-   void                        ownerIs(typename Owner *_owner) { owner_ = _owner; }
    
    bool stronglyReferencing() const { return strongly_ref_; }
    
@@ -54,12 +51,8 @@ public:
    
    // supported notifications -----------------------------------------------------
 protected:
-   BaseNotifiee(const typename Notifier::Ptr& _notifier,
-                const typename Owner *_owner,
-                bool _strong_ref=true) :
-                                          notifier_(_notifier),
-                                          owner_(_owner),
-                                          strongly_ref_(_strong_ref) {
+   BaseNotifiee(const typename Notifier::Ptr& _notifier, bool _strong_ref=true) :
+                                  notifier_(_notifier), strongly_ref_(_strong_ref) {
       if (_notifier) {
          Notifier *n_ = const_cast<Notifier *>(_notifier.ptr());
          n_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
@@ -67,7 +60,6 @@ protected:
       }
    }
    typename Notifier::Ptr notifier_;
-   typename Owner        *owner_;
    bool                   strongly_ref_;
    // disallowed operations =======================================================
    BaseNotifiee (const BaseNotifiee&);
