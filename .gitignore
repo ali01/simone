@@ -1,8 +1,16 @@
 simone
-.sync.make
+sync.make
 xcode/
 .DS_Store
+*.REMOTE
+*.LOCAL
 *.bak
+*.obj
+*.pbd
+*.cd
+*.orig
+*.sln
+*.suo
 *.o
 *.d
 *.d.*

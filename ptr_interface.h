@@ -4,15 +4,17 @@
 
 #ifndef PTRINTERFACE_H_VGPMQRTI
 #define PTRINTERFACE_H_VGPMQRTI
-#include "../globals.h"
+#include "utility.h"
+#include "ptr.h"
 
 namespace Simone {
 
-template <class T>
+template <typename T>
 class PtrInterface {
    friend class Ptr<T>;
 public:
     PtrInterface() : ref_(0) {}
+    virtual ~PtrInterface() {}
     unsigned long references() const { return ref_; }
     // DRC - support for templates
     inline const PtrInterface * newRef() const { ++ref_; return this; }
@@ -23,7 +25,7 @@ protected:
     virtual ~PtrInterface() {}
     virtual void onZeroReferences() const { delete this; }
 private:
-    mutable long unsigned ref_;
+    mutable unsigned long ref_;
 };
 
 }

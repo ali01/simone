@@ -9,7 +9,7 @@ namespace Simone {
 using std::map;
 
 template <typename KeyType, typename ValueType>
-class Map : public Simone::PtrInterface<Map<KeyType,ValueType> > {
+class Map : public PtrInterface<Map<KeyType,ValueType> > {
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const Map<KeyType,ValueType> > PtrConst;

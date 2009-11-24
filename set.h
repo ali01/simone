@@ -13,7 +13,7 @@ using std::allocator;
 template <typename T,
           typename Compare=less<T>,
           typename Allocator=allocator<T> >
-class Set : public Simone::PtrInterface<Set<T,Compare,Allocator> > {
+class Set : public PtrInterface<Set<T,Compare,Allocator> > {
 public: // todo: support boost_foreach
    // type declarations ==============================================================
    typedef Simone::Ptr<const Set<T,Compare,Allocator> > PtrConst;

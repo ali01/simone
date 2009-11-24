@@ -1,0 +1,12 @@
+LIBS += $(VOL_LIBRARY_PATH)/libboost_thread.a
+
+DIR_PRNZS0KG := simone/thread
+SUB_PRNZS0KG := 
+
+SRCS += $(wildcard $(DIR_PRNZS0KG)/*.$(EXT))
+
+MK_PRNZS0KG := $(foreach sdir,$(SUB_PRNZS0KG),$(wildcard $(DIR_PRNZS0KG)/$(sdir)/*.$(SUBDIR_EXT)))
+ifneq ($(MK_PRNZS0KG),)
+$(info -- including subdirectory makefiles ($(DIR_PRNZS0KG)): $(MK_PRNZS0KG)) 
+include $(MK_PRNZS0KG)
+endif

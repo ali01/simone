@@ -5,14 +5,16 @@
 #define BASENOTIFIEE_H_SZV7FZSO
 
 #include "ptr.h"
+#include "utility.h"
 
 namespace Simone {
 
 template <typename Notifier>
-class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier> > {
+class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier> >,
+                     private boost::noncopyable {
 public:
-   typedef Ptr<const BaseNotifiee<Notifier> > PtrConst;
-   typedef Ptr<BaseNotifiee<Notifier> > Ptr;
+   typedef Simone::Ptr<const BaseNotifiee<Notifier> > PtrConst;
+   typedef Simone::Ptr<BaseNotifiee<Notifier> > Ptr;
    
    virtual ~BaseNotifiee() {
       if (notifier_) {
@@ -61,9 +63,6 @@ protected:
    }
    typename Notifier::Ptr notifier_;
    bool                   strongly_ref_;
-   // disallowed operations =======================================================
-   BaseNotifiee (const BaseNotifiee&);
-   void operator=(const BaseNotifiee&);
 };
 
 } /* end of namespace Simone */

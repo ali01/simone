@@ -2,13 +2,14 @@
 #define VECTOR_H_563FAR15
 
 #include <vector>
+using std::vector;
+
 #include "ptr.h"
 
 namespace Simone {
-using std::vector;
 
 template <typename T>
-class Vector : public Simone::PtrInterface<Vector<T> > {
+class Vector : public PtrInterface<Vector<T> > {
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const Vector<T> > PtrConst;
@@ -47,7 +48,7 @@ public:
    
    iterator elementDel(iterator it) { return vector_.erase(it); }
    void elementIs(uint32_t _i, const T& _e) { vector_[_i] = _e; }
-   void enqueueBack(const T& _e) { vector_.push_back(_e); }
+   void pushBack(const T& _e) { vector_.push_back(_e); }
    void popBack() { vector_.pop_back(); }
    void clear() { vector_.clear(); }
    
