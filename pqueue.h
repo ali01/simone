@@ -61,7 +61,7 @@ public:
    }
    
    void pushFront(const T& _e) { queue_.push(_e); }
-   void popFront() { assert(false); queue_.pop(); }
+   void popFront() { queue_.pop(); }
    void clear() {
       Deque<T>::clear();
       heapify();

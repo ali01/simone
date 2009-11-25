@@ -9,6 +9,18 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
+#ifdef linux
+#include <stdint.h>
+#endif
+
+#ifdef __APPLE__
+#include <stdint.h>
+#endif
+
+#ifdef WIN32
+#include "portability/vs-stdint.h"
+#endif
+
 #ifdef __DEBUG__ 
    #define IF_DEBUG(stmt)       stmt
    #define ABORT()              assert(false); abort()
@@ -21,6 +33,7 @@
             }
    #include <iostream>
    #include <sstream>
+   #include <fstream>
    #include <typeinfo>
    #include <string>
    using std::cout;

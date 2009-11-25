@@ -33,4 +33,88 @@ public:
    AttributeNotSupportedException(string what) : NoImplementationException(what) {} 
 };
 
+class UnknownTypeException : public Exception {
+public:
+   UnknownTypeException( string what )  : Exception(what) {}
+};
+
+class UnknownAttrException : public Exception {
+public:
+   UnknownAttrException( string what )  : Exception(what) {}
+};
+
+class UnknownDelimiterException : public Exception {
+public:
+   UnknownDelimiterException( string what )  : Exception(what) {}
+};
+
+class UnknownArgException : public Exception {
+public:
+   UnknownArgException( string what )  : Exception(what) {}
+};
+
+
+class RangeException : public Exception {
+public:
+   RangeException( string what ) : Exception(what) {} 
+};
+
+class MemoryException : public Exception {
+ public:
+   MemoryException( string what ) : Exception(what) {} 
+};
+
+class StorageException : public Exception {
+ public:
+   StorageException( string what ) : Exception(what) {}
+};
+
+class NameInUseException : public Exception {
+public:
+   NameInUseException( string what ) : Exception( what ) {} 
+   
+};
+
+class IllegalNameException: public Exception {
+ public:
+   IllegalNameException( string what ): Exception( what ) {}
+   
+};
+
+class EntityNotFoundException : public Exception {
+public:
+   EntityNotFoundException( string what ) : Exception( what ) {} 
+   
+};
+
+
+class MemoryLimitExceededException : public MemoryException {
+public:
+   MemoryLimitExceededException(string what) : MemoryException(what) {}
+   
+};
+
+class ReadOnlyException : public Exception {
+public:
+   ReadOnlyException(string what) : Exception(what) {}
+   
+};
+
+class InvalidFormattingException: public Exception {
+public:
+   InvalidFormattingException(string what) : Exception(what) {}
+   
+};
+
+class InvalidOperationException: public Exception {
+public:
+   InvalidOperationException(string what) : Exception(what) {}
+   
+};
+
+class InvalidValueException: public Exception {
+public:
+   InvalidValueException(string what) : Exception(what) {}
+};
+
 } /* end of namespace Simone */

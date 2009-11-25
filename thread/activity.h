@@ -32,8 +32,12 @@ public:
    typedef Simone::Ptr<Activity> Ptr;
    
    // TODO: consider kWaiting necessary?
-   struct Config { enum Attr { kReady, kRunning }; };
-   struct Status { enum Attr { kReady, kStopping, kWaiting, kRunning }; };
+   struct Config {
+      enum ThreadStatus { kReady, kRunning };
+      enum SchedulingMode { kDefault, kAutomatic };
+   };
+   struct Status { enum ThreadStatus { kReady, kStopping, kWaiting, kRunning }; };
+   
    // factory constructor ============================================================
    static Ptr ActivityNew(const string &_name, const ActivityManager *const _m)
       { return new Activity(_name, _m); }
@@ -45,14 +49,24 @@ public:
       typedef Simone::Ptr<Notifiee> Ptr;
       
       const Time& nextTime() const { return next_time_; }
+      
+      Activity::Config::SchedulingMode schedulingMode() const {
+         return scheduling_mode_;
+      }
+      
+      void schedulingModeIs(Activity::Config::SchedulingMode _m) {
+         scheduling_mode_ = _m;
+      }
       // notifications ---------------------------------------------------------------
       virtual void onStatus() {}
-      virtual void onNextTime() {}
    protected:
       Notifiee(Activity::Ptr _a) : BaseNotifiee<Activity>(_a) {}
-      Notifiee(Activity::Ptr _a, Time _next_time): BaseNotifiee<Activity>(_a),
-                                                   next_time_(_next_time) {}
+      Notifiee(Activity::Ptr _a, Time _next_time):
+                                       BaseNotifiee<Activity>(_a),
+                                       next_time_(_next_time),
+                                       scheduling_mode_(Activity::Config::kDefault) {}
       Time next_time_;
+      Activity::Config::SchedulingMode scheduling_mode_;
    };
    
    struct lt_NotifieePtr : public binary_function<Notifiee*, Notifiee*, bool> {
@@ -61,20 +75,17 @@ public:
       }
    };
    
-   // TODO: consider how to support this
-   // void transferRateIs(const ShipmentsPerDay& _s) { transfer_rate_ = _s; }
-   
    const string& name() const {
       lock lk(mutex_);
       return name_;
    }
    
-   Status::Attr status() const {
+   Status::ThreadStatus status() const {
       lock lk(mutex_);
       return status_;
    }
    
-   void statusIs(Config::Attr _s) {
+   void statusIs(Config::ThreadStatus _s) {
       lock lk(mutex_);
       switch (_s) {
          case Config::kReady:
@@ -94,23 +105,20 @@ public:
       }
    }
    
-   Time nextTime() const {
-      lock lk(mutex_);
-      return next_time_;
-   }
-   
-   void nextTimeIs(const Time& _t) {
-      lock lk(mutex_);
-      next_time_ = _t;
-      fireOnNextTime();
-   }
+   const TimeDelta& autoTimeSpacing() const { return auto_time_spacing_; }
+   void autoTimeSpacingIs(const TimeDelta& _td) { auto_time_spacing_ = _td; }
    
    // notification support -----------------------------------------------------------
-   void notifieeIs(Notifiee *_n) const {
-      Activity *me = const_cast<Activity *>(this);
-      if (_n->nextTime() == Time(Time::kNull))
+   void notifieeIs(Notifiee *_n) {
+      if (_n->schedulingMode() == Config::kAutomatic) {
+         _n->next_time_ = last_scheduled_time_ + autoTimeSpacing();
+      } else if (_n->nextTime() == Time(Time::kNull)) {
          _n->next_time_ = Time(Clock::kMicrosecUniversal);
-      me->notifiees_.pushFront(_n);
+      }
+      if (_n->nextTime() > last_scheduled_time_) {
+         last_scheduled_time_ = _n->nextTime();
+      }
+      notifiees_.pushFront(_n);
    }
    
    void notifieeDel(Notifiee *_n) const {
@@ -121,12 +129,13 @@ public:
          me->notifiees_.elementDel(it);
       }
    }
-   // overloaded operators ===========================================================
+   
 protected:
    Activity(const string &_name, const ActivityManager *const _m) :
                                    name_(_name),
                                    status_(Status::kReady),
-                                   next_time_(Clock::kMicrosecUniversal),
+                                   last_scheduled_time_(Clock::kMicrosecUniversal),
+                                   auto_time_spacing_(0,0,0),
                                    manager_(_m) {}
 private:
    // member functions ===============================================================
@@ -139,9 +148,7 @@ private:
       } else { ABORT(); }
    }
    
-   void fireOnNextTime() { foreach(Notifiee *_n, notifiees_) { _n->onNextTime(); }}
-   
-   void statusIs(Status::Attr _s) {
+   void statusIs(Status::ThreadStatus _s) {
       lock lk(mutex_);
       status_ = _s;
    }
@@ -154,20 +161,13 @@ private:
    // data members ===================================================================
    
    string name_;
-   Status::Attr status_;
-   Time next_time_;
-   PriorityQueue<Notifiee*,lt_NotifieePtr> notifiees_;
+   Status::ThreadStatus status_;
+   Time last_scheduled_time_;
+   TimeDelta auto_time_spacing_;
    const ActivityManager *const manager_;
+   PriorityQueue<Notifiee*,lt_NotifieePtr> notifiees_;
    
    mutable boost::recursive_mutex mutex_; // coarse granularity sync mutex
-};
-
-class lt_Activity : public binary_function<Activity::Ptr, Activity::Ptr, bool> {
-public:
-   lt_Activity() {}
-   bool operator()(Activity::Ptr a, Activity::Ptr b) const {
-      return (a->nextTime() > b->nextTime());
-   }
 };
 
 } /* end of namespace Simone */

@@ -3,6 +3,7 @@
 # =============================================================================
 
 PROJECT  = a.out
+TESTER   = rtests
 SUBDIRS ?=
 LIBS    ?=
 
@@ -65,8 +66,9 @@ EXT := cpp
 # =============================================================================
 # ===================      Project Specific Build Setup      ==================
 # =============================================================================
-
-SUBDIR_EXT := submake
+.DEFAULT_GOAL := all
+SUBDIR_EXT    := submake
+TEST_SRCS     ?= 
 
 MK_EXT := $(wildcard *.make)
 ifneq ($(MK_EXT),)
@@ -88,12 +90,17 @@ SRCS += $(wildcard *.$(EXT))
 OBJS += $(patsubst %.$(EXT),%.o,$(SRCS))
 DEPS := $(patsubst %.$(EXT),%.d,$(SRCS))
 
+TEST_OBJS += $(patsubst %.$(EXT),%.o,$(TEST_SRCS))
+TEST_DEPS := $(patsubst %.$(EXT),%.d,$(TEST_SRCS))
+
 # =============================================================================
 # =======================      Generic Build Setup      =======================
 # =============================================================================
-.PHONY: all run nolink
+.PHONY: all run test nolink
 
 all: $(PROJECT)
+
+test: $(TESTER)
 
 $(OBJS): %.o: %.$(EXT)
 	@$(CXX) $(CPPFLAGS) -MM -MP -MF $(basename $<).d -MT $(basename $<).o $<
@@ -101,6 +108,14 @@ $(OBJS): %.o: %.$(EXT)
 
 $(PROJECT): $(OBJS) | .gitignore
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(PROJECT) $(OBJS) $(LIBS)
+
+
+$(TEST_OBJS): %.o: %.$(EXT)
+	@$(CXX) $(CPPFLAGS) -MM -MP -MF $(basename $<).d -MT $(basename $<).o $<
+	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+
+$(TESTER): $(OBJS) $(TEST_OBJS) | .gitignore
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(TESTER) $(OBJS) $(TEST_OBJS) $(LIBS)
 
 nolink: $(OBJS) | .gitignore
 
@@ -110,6 +125,7 @@ nolink: $(OBJS) | .gitignore
 # http://bit.ly/42KS62
 
 include $(wildcard $(DEPS))
+include $(wildcard $(TEST_DEPS))
 
 # Alternatives (instead of dependency generation in rule for $(OBJS)):
 
@@ -212,12 +228,14 @@ endif
 
 clean:
 	rm -f $(OBJS)
+	rm -f $(TEST_OBJS)
 	rm -f $(PROJECT).tar.gz
 	rm -f $(PROJECT)
 	rm -f *.o *~ ._* .DS_Store
 
 clean-deps:
 	rm -f $(DEPS)
+	rm -f $(TEST_DEPS)
 	rm -f *.d
 	rm -f *.d.*
 	rm -f .*.d

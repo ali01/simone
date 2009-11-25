@@ -25,6 +25,17 @@ public:
    typedef boost::posix_time::time_res_traits::tick_type tick_type;
    typedef boost::posix_time::time_res_traits::impl_type impl_type;
    
+   TimeDelta(float unconvertedHrs){
+      int hrs = (int)(unconvertedHrs +.5);
+      float minutesLeft = (unconvertedHrs - hrs) * 60;
+      int min = (int)(minutesLeft+ .5);
+      float secondsLeft = (minutesLeft - min)*60;
+      int sec = (int)(secondsLeft + .5);
+      float milliLeft = (secondsLeft - sec)*1000;
+      int milli = (int)(milliLeft + .5); //todo is this fractional seconds? is this formula right?
+      delta_ = boost::posix_time::time_duration(hrs, min, sec, milli);
+   }
+
    TimeDelta(long _hrs, long _min, long _sec, long _fractional=0) :
                                               delta_(_hrs, _min, _sec, _fractional) {}
    TimeDelta(const TimeDelta& rhs) : delta_(rhs.delta_.hours(),
