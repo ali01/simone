@@ -14,7 +14,6 @@ class PtrInterface {
    friend class Ptr<T>;
 public:
     PtrInterface() : ref_(0) {}
-    virtual ~PtrInterface() {}
     unsigned long references() const { return ref_; }
     // DRC - support for templates
     inline const PtrInterface * newRef() const { ++ref_; return this; }

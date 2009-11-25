@@ -21,7 +21,7 @@ void Activity::runActivity() {
 
 void Activity::sleepUntil(const Time& _time) {
    timed_lock lk(manager_->mutex_, absoluteTime(_time).ptime());
-   while (timeDelta(_time) > milliseconds(0)) {
+   while (timeDelta(_time) > milliseconds(0) && lk.owns_lock()) {
       statusIs(Status::kWaiting);
       manager_->time_delta_changed_.timed_wait(lk, absoluteTime(_time).ptime());
    }
