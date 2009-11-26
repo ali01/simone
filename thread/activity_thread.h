@@ -16,36 +16,47 @@ public:
    typedef Simone::Ptr<const ActivityThread> PtrConst;
    typedef Simone::Ptr<ActivityThread> Ptr;
    
-   struct Config { enum Attr { kFree, kRunning         }; };
-   struct Status { enum Attr { kFree, kReady, kRunning }; };
+   struct Config { enum ThreadStatus { kFree, kRunning }; };
+   struct Status { enum ThreadStatus { kFree, kReady, kRunning }; };
    // factory constructor ============================================================
    static Ptr ActivityThreadNew()                 { return new ActivityThread();   }
    static Ptr ActivityThreadNew(Activity::Ptr _a) { return new ActivityThread(_a); }
    
    ~ActivityThread() { statusIs(Config::kFree); }
    // member functions ===============================================================
-   Status::Attr status() const {
+   Status::ThreadStatus status() const {
       if (thread_ == NULL) { return Status::kFree; }
       else {
          return thread_ ? Status::kRunning : Status::kReady;
       }
    }
    
-   void statusIs(Config::Attr _status);
+   void statusIs(Config::ThreadStatus _status);
+   void executionModeIs(Activity::Config::ExecutionMode _e) {
+      switch (_e) {
+         case Activity::Config::kBlocking:
+            if (thread_) thread_->join();
+            break;
+         case Activity::Config::kNonBlocking:
+            break;
+         default: throw AttributeNotSupportedException("unknown execution mode");
+      }
+   }
 protected:
    ActivityThread() : runnable_(NULL), thread_(NULL) {}
    ActivityThread(Activity::Ptr _a) : runnable_(_a) {
       thread_ = new boost::thread(runnable_);
+      _a->activity_thread_ = this;
    }
 private:
    class RunnableActivity {
    public:      
       RunnableActivity(Activity::Ptr _a) : activity_(_a) {}
       
-      struct Config { enum Attr { kFree, kReady }; };
-      struct Status { enum Attr { kFree, kReady, kRunning }; };
+      struct Config { enum ThreadStatus { kFree, kReady }; };
+      struct Status { enum ThreadStatus { kFree, kReady, kRunning }; };
       
-      Status::Attr status() const {
+      Status::ThreadStatus status() const {
          if (activity_ == NULL) { return Status::kFree; }
          else {
             bool running = activity_->status() == Activity::Status::kRunning;
@@ -53,7 +64,7 @@ private:
          }
       }
       
-      void statusIs(Config::Attr _s);
+      void statusIs(Config::ThreadStatus _s);
       
       Activity::Ptr activity() const { return activity_; }
       

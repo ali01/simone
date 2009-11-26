@@ -2,10 +2,11 @@
 # ======================      Project Specific Setup      =====================
 # =============================================================================
 
-PROJECT  = a.out
-TESTER   = rtests
-SUBDIRS ?=
-LIBS    ?=
+PROJECT     := a.out
+SUBDIRS     ?=
+LIBS        ?=
+
+TESTER      := rtests
 
 # =============================================================================
 # =====================      Source Control Variables      ====================
@@ -63,12 +64,13 @@ endif
 CXX := g++
 EXT := cpp
 
+# -gfull
+
 # =============================================================================
 # ===================      Project Specific Build Setup      ==================
 # =============================================================================
 .DEFAULT_GOAL := all
 SUBDIR_EXT    := submake
-TEST_SRCS     ?= 
 
 MK_EXT := $(wildcard *.make)
 ifneq ($(MK_EXT),)
@@ -90,6 +92,7 @@ SRCS += $(wildcard *.$(EXT))
 OBJS += $(patsubst %.$(EXT),%.o,$(SRCS))
 DEPS := $(patsubst %.$(EXT),%.d,$(SRCS))
 
+TEST_SRCS ?=
 TEST_OBJS += $(patsubst %.$(EXT),%.o,$(TEST_SRCS))
 TEST_DEPS := $(patsubst %.$(EXT),%.d,$(TEST_SRCS))
 
@@ -231,6 +234,7 @@ clean:
 	rm -f $(TEST_OBJS)
 	rm -f $(PROJECT).tar.gz
 	rm -f $(PROJECT)
+	rm -f $(TESTER)
 	rm -f *.o *~ ._* .DS_Store
 
 clean-deps:

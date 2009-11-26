@@ -1,5 +1,4 @@
 .DEFAULT_GOAL   := test
 PROJECT         := simone
-SUBDIRS 		    := thread time network
+SUBDIRS         := thread time network simone.test
 SUBDIR_EXT      := submake01
-TEST_SRCS       := simone.test/test.cpp

@@ -17,8 +17,6 @@ class Time : private boost::less_than_comparable<Time,
 public:
    enum SpecialValue { kInfinity, kNegInfinity, kMax, kMin, kNull };
    
-   Time() : ptime_(boost::date_time::not_a_date_time) {}
-   
    explicit Time(Clock::Type _type) {
       switch (_type) {
          case Clock::kSecondLocal:
@@ -37,7 +35,7 @@ public:
       }
    }
    
-   explicit Time(SpecialValue _v) {
+   explicit Time(SpecialValue _v=kNull) {
       switch (_v) {
          case kInfinity:
             ptime_ = boost::posix_time::ptime(boost::date_time::pos_infin);

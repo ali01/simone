@@ -23,9 +23,11 @@ using std::binary_function;
 
 namespace Simone {
 /*     forward declaration     */ class ActivityManager;
+/*     forward declaration     */ class ActivityThread;
 class Activity : public PtrInterface<Activity>, private boost::noncopyable {
    typedef boost::recursive_mutex::scoped_lock lock;
    typedef boost::recursive_timed_mutex::scoped_lock timed_lock;
+   friend class ActivityThread;
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const Activity> PtrConst;
@@ -35,6 +37,7 @@ public:
    struct Config {
       enum ThreadStatus { kReady, kRunning };
       enum SchedulingMode { kDefault, kAutomatic };
+      enum ExecutionMode { kNonBlocking, kBlocking };
    };
    struct Status { enum ThreadStatus { kReady, kStopping, kWaiting, kRunning }; };
    
@@ -60,13 +63,25 @@ public:
       // notifications ---------------------------------------------------------------
       virtual void onStatus() {}
    protected:
-      Notifiee(Activity::Ptr _a) : BaseNotifiee<Activity>(_a) {}
-      Notifiee(Activity::Ptr _a, Time _next_time):
-                                       BaseNotifiee<Activity>(_a),
+      Notifiee(Activity::Ptr _a, Config::ExecutionMode _e=Config::kNonBlocking) :
+                                                                      activity_(_a) {
+         BaseNotifiee<Activity>::notifierIs(_a);
+         processExecutionMode(_e);
+      }
+      
+      Notifiee(Activity::Ptr _a, Time _next_time,
+               Config::ExecutionMode _e=Config::kNonBlocking):
                                        next_time_(_next_time),
-                                       scheduling_mode_(Activity::Config::kDefault) {}
+                                       activity_(_a),
+                                       scheduling_mode_(Activity::Config::kDefault) {
+         BaseNotifiee<Activity>::notifierIs(_a);
+         processExecutionMode(_e);
+      }
       Time next_time_;
+      Activity::Ptr activity_;
       Activity::Config::SchedulingMode scheduling_mode_;
+   private:
+      void processExecutionMode(Config::ExecutionMode _e);
    };
    
    struct lt_NotifieePtr : public binary_function<Notifiee*, Notifiee*, bool> {
@@ -159,12 +174,15 @@ private:
    
    void sleepUntil(const Time& _time);
    // data members ===================================================================
+   friend
+   void Notifiee::processExecutionMode(Config::ExecutionMode _e);
    
    string name_;
    Status::ThreadStatus status_;
    Time last_scheduled_time_;
    TimeDelta auto_time_spacing_;
    const ActivityManager *const manager_;
+   ActivityThread *activity_thread_;
    PriorityQueue<Notifiee*,lt_NotifieePtr> notifiees_;
    
    mutable boost::recursive_mutex mutex_; // coarse granularity sync mutex

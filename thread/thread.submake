@@ -1,7 +1,7 @@
 LIBS += $(VOL_LIBRARY_PATH)/libboost_thread.a
 
 DIR_PRNZS0KG := simone/thread
-SUB_PRNZS0KG := 
+SUB_PRNZS0KG :=
 
 SRCS += $(wildcard $(DIR_PRNZS0KG)/*.$(EXT))
 

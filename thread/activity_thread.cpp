@@ -10,12 +10,12 @@
 
 namespace Simone {
 
-void ActivityThread::statusIs(Config::Attr _status) {
+void ActivityThread::statusIs(Config::ThreadStatus _status) {
    switch (_status) {
       case Config::kFree:
          runnable_.statusIs(RunnableActivity::Config::kFree);
          if (thread_) {
-            delete thread_;
+            // delete thread_;
             thread_ = NULL;
          }
          break;
@@ -40,7 +40,7 @@ void ActivityThread::statusIs(Config::Attr _status) {
    }
 }
 
-void ActivityThread::RunnableActivity::statusIs(Config::Attr _s) {
+void ActivityThread::RunnableActivity::statusIs(Config::ThreadStatus _s) {
    if (_s == Config::kFree || _s == Config::kReady) {
       activity_->statusIs(Activity::Config::kReady);
       if (_s == Config::kFree) { activity_ = NULL; }

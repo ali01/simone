@@ -5,6 +5,7 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #include "time_types.h"
+#include <cmath>
 
 namespace Simone {
 
@@ -25,15 +26,11 @@ public:
    typedef boost::posix_time::time_res_traits::tick_type tick_type;
    typedef boost::posix_time::time_res_traits::impl_type impl_type;
    
-   TimeDelta(float unconvertedHrs){
-      int hrs = (int)(unconvertedHrs +.5);
-      float minutesLeft = (unconvertedHrs - hrs) * 60;
-      int min = (int)(minutesLeft+ .5);
-      float secondsLeft = (minutesLeft - min)*60;
-      int sec = (int)(secondsLeft + .5);
-      float milliLeft = (secondsLeft - sec)*1000;
-      int milli = (int)(milliLeft + .5); //todo is this fractional seconds? is this formula right?
-      delta_ = boost::posix_time::time_duration(hrs, min, sec, milli);
+   TimeDelta(float sec_flt){
+      long sec     = static_cast<long>(floor(sec_flt));
+      uint16_t res = boost::posix_time::time_duration::num_fractional_digits();
+      long fract   = static_cast<long>(floor((sec_flt - sec) * res));
+      delta_       = boost::posix_time::time_duration(0, 0, sec, fract);
    }
 
    TimeDelta(long _hrs, long _min, long _sec, long _fractional=0) :

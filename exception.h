@@ -117,4 +117,9 @@ public:
    InvalidValueException(string what) : Exception(what) {}
 };
 
+class NullPointerException : public InvalidValueException {
+public:
+   NullPointerException(string what) : InvalidValueException(what) {}
+};
+
 } /* end of namespace Simone */

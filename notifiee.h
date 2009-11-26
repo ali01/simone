@@ -6,6 +6,7 @@
 
 #include "ptr.h"
 #include "utility.h"
+#include "exception.h"
 
 namespace Simone {
 
@@ -53,14 +54,7 @@ public:
    
    // supported notifications -----------------------------------------------------
 protected:
-   BaseNotifiee(const typename Notifier::Ptr& _notifier, bool _strong_ref=true) :
-                                  notifier_(_notifier), strongly_ref_(_strong_ref) {
-      if (_notifier) {
-         Notifier *n_ = const_cast<Notifier *>(_notifier.ptr());
-         n_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
-         if ( ! stronglyReferencing()) { n_->deleteRef(); }
-      }
-   }
+   BaseNotifiee() {}
    typename Notifier::Ptr notifier_;
    bool                   strongly_ref_;
 };
