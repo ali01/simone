@@ -1,5 +1,5 @@
 DIR_OUEHW19P := time
-SUB_OUEHW19P := 
+SUB_OUEHW19P := time.test
 
 SRCS += $(wildcard $(DIR_OUEHW19P)/*.$(EXT))
 

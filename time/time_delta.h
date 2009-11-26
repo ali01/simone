@@ -26,11 +26,11 @@ public:
    typedef boost::posix_time::time_res_traits::tick_type tick_type;
    typedef boost::posix_time::time_res_traits::impl_type impl_type;
    
-   TimeDelta(float sec_flt){
-      long sec     = static_cast<long>(floor(sec_flt));
-      uint16_t res = boost::posix_time::time_duration::num_fractional_digits();
-      long fract   = static_cast<long>(floor((sec_flt - sec) * res));
-      delta_       = boost::posix_time::time_duration(0, 0, sec, fract);
+   TimeDelta(double sec_dbl){
+      long sec           = static_cast<long>(floor(sec_dbl));
+      unsigned short res = boost::posix_time::time_duration::num_fractional_digits();
+      long fract         = static_cast<long>(floor((sec_dbl - sec) * pow(10, res)));
+      delta_             = boost::posix_time::time_duration(0, 0, sec, fract);
    }
 
    TimeDelta(long _hrs, long _min, long _sec, long _fractional=0) :
@@ -40,6 +40,15 @@ public:
                                             rhs.delta_.seconds(),
                                             rhs.delta_.fractional_seconds()) {}
    
+   long totalSeconds() { return delta_.total_seconds(); }
+   
+   double totalSecondsDbl() {
+      double sec_dbl     = delta_.total_seconds();
+      unsigned short res = boost::posix_time::time_duration::num_fractional_digits();
+      double fract       = static_cast<double>(delta_.fractional_seconds());
+      fract       = fract / pow(10, res);
+      return sec_dbl + fract;
+   }
    // operators ======================================================================
    TimeDelta& operator=(const TimeDelta& rhs) {
       delta_ = rhs.delta_;
@@ -125,8 +134,8 @@ typedef boost::date_time::subsecond_duration<TimeDelta,1000000> microseconds;
 
 #ifdef BOOST_DATE_TIME_HAS_NANOSECONDS
 
-typedef date_time::subsecond_duration<TimeDelta,1000000000> nanosec;
-typedef date_time::subsecond_duration<TimeDelta,1000000000> nanoseconds;
+typedef boost::date_time::subsecond_duration<TimeDelta,1000000000> nanosec;
+typedef boost::date_time::subsecond_duration<TimeDelta,1000000000> nanoseconds;
 
 #endif
 

@@ -1,0 +1,10 @@
+DIR_5QWD4G28 := thread/thread.test
+SUB_5QWD4G28 := 
+
+TEST_SRCS += $(wildcard $(DIR_5QWD4G28)/*.$(EXT))
+
+MK_5QWD4G28 := $(foreach sdir,$(SUB_5QWD4G28),$(wildcard $(DIR_5QWD4G28)/$(sdir)/*.(SUBDIR_EXT)))
+ifneq ($(MK_5QWD4G28),)
+$(info -- including subdirectory makefiles ($(DIR_5QWD4G28)): $(MK_5QWD4G28)) 
+include $(MK_5QWD4G28)
+endif
