@@ -13,26 +13,14 @@ class TimeDelta : private boost::less_than_comparable<TimeDelta,
                                boost::equality_comparable<TimeDelta> > {
    friend class Time;
    friend struct this_thread;
-public:
-   typedef boost::posix_time::time_duration duration_type;
-   typedef boost::posix_time::time_res_traits rep_type;
-   typedef boost::posix_time::time_res_traits traits_type;
-   typedef boost::posix_time::time_res_traits::day_type day_type;
-   typedef boost::posix_time::time_res_traits::hour_type hour_type;
-   typedef boost::posix_time::time_res_traits::min_type min_type;
-   typedef boost::posix_time::time_res_traits::sec_type sec_type;
-   typedef boost::posix_time::time_res_traits::fractional_seconds_type
-                                                              fractional_seconds_type;
-   typedef boost::posix_time::time_res_traits::tick_type tick_type;
-   typedef boost::posix_time::time_res_traits::impl_type impl_type;
-   
+public:   
    TimeDelta(double sec_dbl){
-      long sec           = static_cast<long>(floor(sec_dbl));
-      unsigned short res = boost::posix_time::time_duration::num_fractional_digits();
-      long fract         = static_cast<long>(floor((sec_dbl - sec) * pow(10, res)));
-      delta_             = boost::posix_time::time_duration(0, 0, sec, fract);
+      long sec   = static_cast<long>(floor(sec_dbl));
+      int res    = boost::posix_time::time_duration::num_fractional_digits();
+      long fract = static_cast<long>(floor((sec_dbl - sec) * pow(10.0, res)));
+      delta_     = boost::posix_time::time_duration(0, 0, sec, fract);
    }
-
+   
    TimeDelta(long _hrs, long _min, long _sec, long _fractional=0) :
                                               delta_(_hrs, _min, _sec, _fractional) {}
    TimeDelta(const TimeDelta& rhs) : delta_(rhs.delta_.hours(),
@@ -40,13 +28,12 @@ public:
                                             rhs.delta_.seconds(),
                                             rhs.delta_.fractional_seconds()) {}
    
-   long totalSeconds() { return delta_.total_seconds(); }
+   long totalSeconds() const { return delta_.total_seconds(); }
    
-   double totalSecondsDbl() {
-      double sec_dbl     = delta_.total_seconds();
-      unsigned short res = boost::posix_time::time_duration::num_fractional_digits();
-      double fract       = static_cast<double>(delta_.fractional_seconds());
-      fract       = fract / pow(10, res);
+   double totalSecondsDbl() const {
+      double sec_dbl = delta_.total_seconds();
+      int res        = boost::posix_time::time_duration::num_fractional_digits();
+      double fract   = delta_.fractional_seconds() / pow(10.0, res);
       return sec_dbl + fract;
    }
    // operators ======================================================================
@@ -107,7 +94,8 @@ public:
 protected:
    TimeDelta(boost::posix_time::time_duration rhs) : delta_(rhs.hours(),
                                                      rhs.minutes(),
-                                                     rhs.seconds()) {}
+                                                     rhs.seconds(),
+                                                     rhs.fractional_seconds()) {}
    boost::posix_time::time_duration delta_;
 };
 
@@ -126,17 +114,23 @@ public:
   explicit seconds(long s) : TimeDelta(0, 0, s) {}
 };
 
-typedef boost::date_time::subsecond_duration<TimeDelta,1000> millisec;
-typedef boost::date_time::subsecond_duration<TimeDelta,1000> milliseconds;
+template <int64_t sec_fraction>
+class subsecond_duration : public TimeDelta {
+   typedef boost::posix_time::time_res_traits traits_type;
+public:
+   explicit subsecond_duration(int64_t ss) :
+      TimeDelta(0, 0, 0, ss * traits_type::res_adjust() / sec_fraction) {}
+};
 
-typedef boost::date_time::subsecond_duration<TimeDelta,1000000> microsec;
-typedef boost::date_time::subsecond_duration<TimeDelta,1000000> microseconds;
+typedef subsecond_duration<1000> milliseconds;
+typedef subsecond_duration<1000> millisec;
 
-#ifdef BOOST_DATE_TIME_HAS_NANOSECONDS
+typedef subsecond_duration<1000000> microseconds;
+typedef subsecond_duration<1000000> microsec;
 
-typedef boost::date_time::subsecond_duration<TimeDelta,1000000000> nanosec;
-typedef boost::date_time::subsecond_duration<TimeDelta,1000000000> nanoseconds;
-
-#endif
+// #ifdef BOOST_DATE_TIME_HAS_NANOSECONDS
+typedef subsecond_duration<1000000000> nanoseconds;
+typedef subsecond_duration<1000000000> nanosec;
+// #endif
 
 } /* end of namespace Simone */

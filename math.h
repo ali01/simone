@@ -4,7 +4,7 @@
 namespace Simone {
 namespace Math {
 
-const double kEpsilon = 0.0000001;
+const double kEpsilon = 0.00001;
 
 bool equal(double lhs, double rhs) {
    return fabs(lhs - rhs) < kEpsilon;

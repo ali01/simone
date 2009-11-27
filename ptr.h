@@ -13,7 +13,11 @@ class Ptr
 public:
    Ptr(T* p = 0) : ptr_(p) { if (ptr_) ptr_->newRef(); }
    Ptr(const Ptr<T>& mp) : ptr_(mp.ptr_) { if (ptr_) ptr_->newRef(); }
-   ~Ptr() { if (ptr_) ptr_->deleteRef(); }
+   ~Ptr() {
+      if (ptr_) {
+         ptr_->deleteRef();
+      }
+   }
    
    Ptr<T>& operator=( const Ptr<T>& mp );
    Ptr<T>& operator=( Ptr<T>& mp );

@@ -1,16 +1,23 @@
 #include "thread_test_setup.h"
+#include "../../test.h"
 
 namespace SimoneTest {
 
-void TestReactor::onStatus() {
+void TestActivityTask::onRun() {
+   lock lk(mutex_);
    switch (test_mode_) {
       case kA:
-         this_thread::sleep(seconds(2));
          answer_ = 42;
          break;
       case kB:
+         answer_ = 2737;
+         break;
       case kC:
+         answer_ = 38193;
+         break;
       case kD:
+         answer_ = 29218;
+         break;
       default: return;
    }
 }

@@ -10,86 +10,50 @@
 
 namespace Simone {
 
-class ActivityThread : public PtrInterface<ActivityThread> {
+class ActivityThread : public PtrInterface<ActivityThread>, boost::noncopyable {
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const ActivityThread> PtrConst;
    typedef Simone::Ptr<ActivityThread> Ptr;
    
-   struct Config { enum ThreadStatus { kFree, kRunning }; };
-   struct Status { enum ThreadStatus { kFree, kReady, kRunning }; };
    // factory constructor ============================================================
-   static Ptr ActivityThreadNew()                 { return new ActivityThread();   }
    static Ptr ActivityThreadNew(Activity::Ptr _a) { return new ActivityThread(_a); }
    
-   ~ActivityThread() { statusIs(Config::kFree); }
    // member functions ===============================================================
-   Status::ThreadStatus status() const {
-      if (thread_ == NULL) { return Status::kFree; }
-      else {
-         return thread_ ? Status::kRunning : Status::kReady;
-      }
+   Activity::Ptr activity() const {
+      return runnable_.activity();
    }
    
-   void statusIs(Config::ThreadStatus _status);
-   void executionModeIs(Activity::Config::ExecutionMode _e) {
-      switch (_e) {
-         case Activity::Config::kBlocking:
-            if (thread_) thread_->join();
-            break;
-         case Activity::Config::kNonBlocking:
-            break;
-         default: throw AttributeNotSupportedException("unknown execution mode");
-      }
+   Activity::Status::RunStatus runStatus() const {
+      return activity()->runStatus();
+   }
+   
+   void runStatusIs(Activity::Config::RunStatus _s) {
+      activity()->runStatusIs(_s);
    }
 protected:
-   ActivityThread() : runnable_(NULL), thread_(NULL) {}
-   ActivityThread(Activity::Ptr _a) : runnable_(_a) {
-      thread_ = new boost::thread(runnable_);
-      _a->activity_thread_ = this;
+   ActivityThread(Activity::Ptr _a) : runnable_(_a), thread_(runnable_) {
+      _a->threads_.add_thread(&thread_);
    }
 private:
    class RunnableActivity {
    public:      
-      RunnableActivity(Activity::Ptr _a) : activity_(_a) {}
-      
-      struct Config { enum ThreadStatus { kFree, kReady }; };
-      struct Status { enum ThreadStatus { kFree, kReady, kRunning }; };
-      
-      Status::ThreadStatus status() const {
-         if (activity_ == NULL) { return Status::kFree; }
-         else {
-            bool running = activity_->status() == Activity::Status::kRunning;
-            return running ? Status::kRunning : Status::kReady;
-         }
+      RunnableActivity(Activity::Ptr _a) : activity_(_a) {
+         if (activity_ == NULL) throw NullPointerException("null activity");
       }
-      
-      void statusIs(Config::ThreadStatus _s);
       
       Activity::Ptr activity() const { return activity_; }
       
-      void activityIs(Activity::Ptr _a) {
-         activity_->statusIs(Activity::Config::kReady);
-         activity_ = _a;
-      }
-      
       void operator()() {
-         activity_->statusIs(Activity::Config::kRunning);
+         activity_->runStatusIs(Activity::Config::kRunning);
       }
    private:
       Activity::Ptr activity_;
    };
    
-   // member functions ===============================================================
-   Activity::Ptr activity() const { return runnable_.activity(); }
-   
-   void activityIs(Activity::Ptr _a) { runnable_.activityIs(_a); }
    // data members ===================================================================
    RunnableActivity  runnable_;
-   boost::thread    *thread_;
-   // disallowed operations ==========================================================
-   ActivityThread(const ActivityThread&);
-   void operator=(const ActivityThread&);
+   boost::thread     thread_;
 };
 
 } /* end of namespace Simone */

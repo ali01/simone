@@ -56,7 +56,7 @@ LDFLAGS ?=
 .IGNORE ?=
 
 ifneq ($(DEBUG),)
-CXXFLAGS := -Wall -g $(ARCH) $(DEBUG)
+CXXFLAGS := -Wall -gfull $(ARCH) $(DEBUG)
 else 
 CXXFLAGS := -O2
 endif

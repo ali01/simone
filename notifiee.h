@@ -10,16 +10,16 @@
 
 namespace Simone {
 
-template <typename Notifier>
-class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier> >,
+template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
+class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
                      private boost::noncopyable {
 public:
-   typedef Simone::Ptr<const BaseNotifiee<Notifier> > PtrConst;
-   typedef Simone::Ptr<BaseNotifiee<Notifier> > Ptr;
+   typedef Simone::Ptr<const BaseNotifiee<Notifier,ChildNotifiee> > PtrConst;
+   typedef Simone::Ptr<BaseNotifiee<Notifier,ChildNotifiee> > Ptr;
    
    virtual ~BaseNotifiee() {
       if (notifier_) {
-         notifier_->notifieeDel(static_cast<typename Notifier::Notifiee*>(this));
+         notifier_->notifieeDel(static_cast<ChildNotifiee*>(this));
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
       }
    }
@@ -27,21 +27,21 @@ public:
    typename Notifier::PtrConst notifier() const { return notifier_; }
    typename Notifier::Ptr      notifier()       { return notifier_; }
    
-   bool stronglyReferencing() const { return strongly_ref_; }
-   
    void notifierIs(const typename Notifier::Ptr& _n) {
       if (notifier_ == _n) { return; }
       if (notifier_) {
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
-         notifier_->notifieeDel(static_cast<typename Notifier::Notifiee*>(this));
-         notifier_ = 0;
+         notifier_->notifieeDel(static_cast<ChildNotifiee*>(this));
+         notifier_ = NULL;
       }
       if (_n) {
          notifier_ = _n;
-         notifier_->notifieeIs(static_cast<typename Notifier::Notifiee*>(this));
+         notifier_->notifieeIs(static_cast<ChildNotifiee*>(this));
          if ( ! stronglyReferencing()) { notifier_->deleteRef(); }
       }
    }
+   
+   bool stronglyReferencing() const { return strongly_ref_; }
    
    void stronglyReferencingIs(bool _s) {
       if(stronglyReferencing() == _s) { return; }
@@ -54,7 +54,7 @@ public:
    
    // supported notifications -----------------------------------------------------
 protected:
-   BaseNotifiee() {}
+   BaseNotifiee() : strongly_ref_(true) {}
    typename Notifier::Ptr notifier_;
    bool                   strongly_ref_;
 };

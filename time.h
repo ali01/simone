@@ -15,7 +15,7 @@ struct Clock {
 class Time : private boost::less_than_comparable<Time,
                             boost::equality_comparable<Time> > {
 public:
-   enum SpecialValue { kInfinity, kNegInfinity, kMax, kMin, kNull };
+   enum SpecialValue { kNow, kInfinity, kNegInfinity, kMax, kMin, kNull };
    
    explicit Time(Clock::Type _type) {
       switch (_type) {
@@ -37,6 +37,9 @@ public:
    
    explicit Time(SpecialValue _v=kNull) {
       switch (_v) {
+         case kNow:
+            ptime_ = boost::posix_time::microsec_clock::universal_time();
+            break;
          case kInfinity:
             ptime_ = boost::posix_time::ptime(boost::date_time::pos_infin);
             break;

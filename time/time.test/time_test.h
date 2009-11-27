@@ -74,29 +74,35 @@ TEST_CASE(TimeDelta_test_3) {
    long sec  = rand() % 10000;
    long msec = rand() % 10000;
    long Msec = rand() % 10000;
+   long nsec = rand() % 10000;
    
    TimeDelta a = hours(hrs) +
                  minutes(min) +
                  seconds(sec);
    a += milliseconds(msec);
    a += microseconds(Msec);
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec),
+   a += nanoseconds(nsec);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec, nsec),
             Math::kEpsilon);
 }
 
-TEST_CASE(TimeDelta_test_3) {
+TEST_CASE(TimeDelta_test_3b) {
    long hrs  = rand() % 10000;
    long min  = rand() % 10000;
    long sec  = rand() % 10000;
    long msec = rand() % 10000;
    long Msec = rand() % 10000;
+   long nsec = rand() % 10000;
+   
+   CK_NE(boost::posix_time::time_res_traits::res_adjust(), 0);
    
    TimeDelta a = hours(hrs) +
                  minutes(min) +
-                 seconds(sec);
-   a += milliseconds(msec);
-   a += microseconds(Msec);
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec),
+                 seconds(sec) +
+                 milliseconds(msec) +
+                 microseconds(Msec) +
+                 nanoseconds(nsec);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec, nsec),
             Math::kEpsilon);
 }
 
