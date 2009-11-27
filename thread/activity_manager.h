@@ -17,7 +17,7 @@ using std::vector;
 
 namespace Simone {
 
-class ActivityManager : public Map<string,Activity::Ptr> {
+class ActivityManager : public Map<string,Activity::Ptr,true> {
    friend class Activity;
    typedef boost::recursive_timed_mutex::scoped_lock timed_lock;
 public:
@@ -64,6 +64,7 @@ public:
    }
 private:
    ActivityManager() : time_delta_(0,0,0) {}
+   ~ActivityManager() { timed_lock lk(timed_mutex_); }
    
    class ActivityReactor : public Activity::Notifiee {
    public:
@@ -84,8 +85,8 @@ private:
    
    // data members ===================================================================
    TimeDelta time_delta_;
-   Deque<ActivityThread::Ptr> threads_;
-   Map<string,ActivityReactor::Ptr> activity_reactors_;
+   Deque<ActivityThread::Ptr,true> threads_;
+   Map<string,ActivityReactor::Ptr,true> activity_reactors_;
    
    mutable boost::condition_variable_any time_delta_changed_;
    mutable boost::recursive_timed_mutex timed_mutex_;

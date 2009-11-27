@@ -1,4 +1,4 @@
-l#pragma once
+#pragma once
 
 #include <string>
 #include <functional>
@@ -8,15 +8,15 @@ l#pragma once
 
 #include "../time.h"
 #include "../ptr.h"
+#include "../set.h"
+#include "../pqueue.h"
+#include "../notifiee.h"
 #include "../exception.h"
 #include "../utility.h"
 #include "../numeric.h"
-#include "../notifiee.h"
 #include "../ordinal.h"
 #include "../utility.h"
 
-#include "concurrent_pqueue.h"
-#include "concurrent_set.h"
 #include "this_thread.h"
 
 using std::string;
@@ -79,7 +79,7 @@ public:
    
    /*=================================================================================
     * Activity task dispatch notifiee ==============================================*/
-   class Task : public BaseNotifiee<Activity,Task> {
+   class Task : public BaseNotifiee<Activity,Task,true> {
       friend class Activity;
    protected:
       Task() : scheduling_mode_(Activity::Config::kDefault) {}
@@ -87,11 +87,11 @@ public:
       Task(Time _next_time): 
                              next_time_(_next_time),
                              scheduling_mode_(Activity::Config::kDefault) {}
+                             
+      ~Task() { lock lk(mutex_); }
+      
       Time next_time_;
       Activity::Config::SchedulingMode scheduling_mode_;
-      
-      typedef boost::recursive_mutex::scoped_lock lock;
-      mutable boost::recursive_mutex mutex_;
    public:
       typedef Simone::Ptr<const Task> PtrConst;
       typedef Simone::Ptr<Task> Ptr;
@@ -113,7 +113,7 @@ public:
       
       void notifierIs(const Activity::Ptr& _n) {
          lock lk(mutex_);
-         BaseNotifiee<Activity,Task>::notifierIs(_n);
+         BaseNotifiee<Activity,Task,true>::notifierIs(_n);
       }
       // notifications ---------------------------------------------------------------
       virtual void onRun() {}
@@ -145,21 +145,20 @@ public:
    void notifieeDel(Task *_n) const {
       lock lk(mutex_);
       Activity *me = const_cast<Activity *>(this);
-      ConcurrentPriorityQueue<Task*>::iterator it = me->run_queue_.begin();
+      PriorityQueue<Task*,lt_TaskPtr,true>::iterator it = me->run_queue_.begin();
       for(; it != run_queue_.end(); ++it) { if (_n == *it) break; }
       if (it != run_queue_.end()) {
          me->run_queue_.elementDel(it);
       }
    }
    
-   class Notifiee : public BaseNotifiee<Activity> {
+   class Notifiee : public BaseNotifiee<Activity,Notifiee,true> {
    protected:
       Notifiee(Activity::Ptr _a) : test_value_(16) {
          notifierIs(_a);
       }
       
-      typedef boost::recursive_mutex::scoped_lock lock;
-      mutable boost::recursive_mutex mutex_;
+      ~Notifiee() { lock lk(mutex_); }
    public:
       int test_value_;
       typedef Simone::Ptr<const Notifiee> PtrConst;
@@ -190,6 +189,7 @@ protected:
                                    auto_time_spacing_(0,0,0),
                                    manager_(_m) {}
    ~Activity() {
+      lock lk(mutex_);
       runStatusIs(Status::kDone);
       threads_.join_all();
    }
@@ -221,8 +221,8 @@ private:
    Time last_scheduled_time_;
    TimeDelta auto_time_spacing_;
    const ActivityManager *const manager_;
-   ConcurrentSet<Notifiee*> notifiees_;
-   ConcurrentPriorityQueue<Task*,lt_TaskPtr> run_queue_;
+   Set<Notifiee*,true> notifiees_;
+   PriorityQueue<Task*,lt_TaskPtr,true> run_queue_;
    
    mutable boost::recursive_mutex mutex_; // coarse granularity sync mutex
    mutable boost::condition_variable_any new_reactors_;

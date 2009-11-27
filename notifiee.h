@@ -8,26 +8,49 @@
 #include "utility.h"
 #include "exception.h"
 
+#include <boost/thread/recursive_mutex.hpp>
+
 namespace Simone {
 
-template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
-class BaseNotifiee : public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
-                     private boost::noncopyable {
-public:
-   typedef Simone::Ptr<const BaseNotifiee<Notifier,ChildNotifiee> > PtrConst;
-   typedef Simone::Ptr<BaseNotifiee<Notifier,ChildNotifiee> > Ptr;
-   
+template <typename Notifier,
+          typename ChildNotifiee=class Notifier::Notifiee,
+          bool _thread_safe_=false>
+class BaseNotifiee :
+            public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee,_thread_safe_> >,
+            private boost::noncopyable {
+protected:
+   BaseNotifiee() : strongly_ref_(true) {}
    virtual ~BaseNotifiee() {
+      if (_thread_safe_) { lock lk(mutex_); };
       if (notifier_) {
          notifier_->notifieeDel(static_cast<ChildNotifiee*>(this));
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
       }
    }
    
-   typename Notifier::PtrConst notifier() const { return notifier_; }
-   typename Notifier::Ptr      notifier()       { return notifier_; }
+   typename Notifier::Ptr notifier_;
+   bool                   strongly_ref_;
+   
+   mutable boost::recursive_mutex mutex_;
+   typedef boost::recursive_mutex::scoped_lock lock;
+   
+public:
+   typedef Simone::Ptr<const BaseNotifiee<Notifier,ChildNotifiee,_thread_safe_> >
+                                                                             PtrConst;
+   typedef Simone::Ptr<BaseNotifiee<Notifier,ChildNotifiee,_thread_safe_> > Ptr;
+   
+   typename Notifier::PtrConst notifier() const {
+      if (_thread_safe_) { lock lk(mutex_); };
+      return notifier_;
+   }
+   
+   typename Notifier::Ptr notifier() {
+      if (_thread_safe_) { lock lk(mutex_); };
+      return notifier_;
+   }
    
    void notifierIs(const typename Notifier::Ptr& _n) {
+      if (_thread_safe_) { lock lk(mutex_); };
       if (notifier_ == _n) { return; }
       if (notifier_) {
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
@@ -41,9 +64,13 @@ public:
       }
    }
    
-   bool stronglyReferencing() const { return strongly_ref_; }
+   bool stronglyReferencing() const {
+      if (_thread_safe_) { lock lk(mutex_); };
+      return strongly_ref_;
+   }
    
    void stronglyReferencingIs(bool _s) {
+      if (_thread_safe_) { lock lk(mutex_); };
       if(stronglyReferencing() == _s) { return; }
       strongly_ref_ = _s;
       if (notifier_) {
@@ -51,12 +78,6 @@ public:
          else                       { notifier_->deleteRef(); }
       }
    }
-   
-   // supported notifications -----------------------------------------------------
-protected:
-   BaseNotifiee() : strongly_ref_(true) {}
-   typename Notifier::Ptr notifier_;
-   bool                   strongly_ref_;
 };
 
 } /* end of namespace Simone */

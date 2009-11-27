@@ -13,7 +13,7 @@ void Activity::runActivity() {
       sleepUntil(n->nextTime());
       n->onRun();
       fireOnTaskCompleted(n);
-      run_queue_.popFront();
+      run_queue_.pop();
       if (runStatus() == Status::kStopping) {
          runStatusIs(Status::kDone);
          break;
