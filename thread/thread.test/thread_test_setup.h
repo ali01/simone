@@ -18,12 +18,16 @@ public:
       return new TestActivityReactor(_a, _t);
    }
    
-   void onRunStatus() { /*lock lk(mutex_);*/ }
+   void onRunStatus() { /*scoped_lock_t lk(mutex_);*/ }
    void onTaskCompleted(Activity::Task *_task);
 private:
    TestActivityReactor(Activity::Ptr _a, TestActivityTask *_t) :
                                           Activity::Notifiee(_a),
                                           task_(_t) { assert(task_); }
+   ~TestActivityReactor() {
+      scoped_lock_t lk(mutex_);
+   }
+   
    TestActivityTask *task_;
 };
 
@@ -41,25 +45,48 @@ public:
    void onRun();
    
    int meaningOfLifeUniverseAndEverything() const {
-      lock lk(mutex_);
+      io_mutex.lock();
+      cout << this << " ~ meaningOfLife (start) ~       " << this_thread::id() << endl;
+      io_mutex.unlock();
+      
+      scoped_lock_t lk(mutex_);
       while ( ! answer_is_available_bool_) {
-      // while (answer_ == 0) {
          answer_is_available_.wait(lk);
       }
+      
+      io_mutex.lock();
+      cout << this << " ~ meaningOfLife (end) ~         " << this_thread::id() << endl;
+      io_mutex.unlock();
       return answer_;
    }
    
    void answerIsAvailable() {
-      lock(mutex_);
+      scoped_lock_t lk(mutex_);
+      io_mutex.lock();
+      cout << this << " ~ answerIsAvailable (start) ~   " << this_thread::id() << endl;
+      io_mutex.unlock();
+      assert(test_value_ == 32); // DEBUG
+      
       answer_is_available_bool_ = true;
       answer_is_available_.notify_all();
+      
+      assert(test_value_ == 32); // DEBUG
+      io_mutex.lock();
+      cout << this << " ~ answerIsAvailable (end) ~     " << this_thread::id() << endl;
+      io_mutex.unlock();
    }
 private:
    TestActivityTask(Activity::Ptr _a, TestMode _m) : 
                     reactor_(TestActivityReactor::TestActivityReactorNew(_a, this)),
                     test_mode_(_m),
                     answer_is_available_bool_(false),
-                    answer_(0) { notifierIs(_a); }
+                    answer_(0) {
+      assert(_a);
+      notifierIs(_a);
+   }
+   ~TestActivityTask() {
+      scoped_lock_t lk(mutex_);
+   }
    TestActivityReactor::Ptr reactor_;
    TestMode test_mode_;
    
@@ -70,10 +97,22 @@ private:
 };
 
 inline void TestActivityReactor::onTaskCompleted(Activity::Task *_task) {
-   lock lk(mutex_);
+   cout << "************" << endl << endl;
+   this_thread::sleep(millisec(20));
+   scoped_lock_t lk(mutex_);
+   io_mutex.lock();
+   cout << this << " ~ onTaskCompleted (start) ~     " << this_thread::id() << endl;
+   io_mutex.unlock();
+   assert(_task);
+   assert(_task->test_value_ == 32); // DEBUG
    if (task_ == _task) {
       task_->answerIsAvailable();
    }
+   assert(_task);
+   assert(_task->test_value_ == 32); // DEBUG
+   io_mutex.lock();
+   cout << this << " ~ onTaskCompleted (end) ~       " << this_thread::id() << endl;
+   io_mutex.unlock();
 }
 
 

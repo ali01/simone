@@ -22,10 +22,14 @@
 using std::string;
 using std::binary_function;
 
+// DEBUG
+#warning remove
+extern boost::recursive_mutex io_mutex;
+
 namespace Simone {
 /*     forward declaration     */ class ActivityManager;
 class Activity : public PtrInterface<Activity>, private boost::noncopyable {
-   typedef boost::recursive_mutex::scoped_lock lock;
+   typedef boost::recursive_mutex::scoped_lock scoped_lock_t;
    typedef boost::recursive_timed_mutex::scoped_lock timed_lock;
    friend class ActivityThread;
 public:
@@ -63,17 +67,17 @@ public:
    }
    
    Status::RunStatus runStatus() const {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       return run_status_;
    }
    
    const TimeDelta& autoTimeSpacing() const {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       return auto_time_spacing_;
    }
    
    void autoTimeSpacingIs(const TimeDelta& _td) {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       auto_time_spacing_ = _td;
    }
    
@@ -82,13 +86,15 @@ public:
    class Task : public BaseNotifiee<Activity,Task,true> {
       friend class Activity;
    protected:
-      Task() : scheduling_mode_(Activity::Config::kDefault) {}
+      Task() : scheduling_mode_(Activity::Config::kDefault) { test_value_ = 32; }
       
       Task(Time _next_time): 
                              next_time_(_next_time),
-                             scheduling_mode_(Activity::Config::kDefault) {}
+                             scheduling_mode_(Activity::Config::kDefault) {
+                                test_value_ = 32;
+                             }
                              
-      ~Task() { lock lk(mutex_); }
+      ~Task() { scoped_lock_t lk(mutex_); }
       
       Time next_time_;
       Activity::Config::SchedulingMode scheduling_mode_;
@@ -96,23 +102,25 @@ public:
       typedef Simone::Ptr<const Task> PtrConst;
       typedef Simone::Ptr<Task> Ptr;
       
+      int test_value_;
+      
       const Time& nextTime() const {
-         lock lk(mutex_);
+         scoped_lock_t lk(mutex_);
          return next_time_;
       }
       
       Activity::Config::SchedulingMode schedulingMode() const {
-         lock lk(mutex_);
+         scoped_lock_t lk(mutex_);
          return scheduling_mode_;
       }
       
       void schedulingModeIs(Activity::Config::SchedulingMode _m) {
-         lock lk(mutex_);
+         scoped_lock_t lk(mutex_);
          scheduling_mode_ = _m;
       }
       
       void notifierIs(const Activity::Ptr& _n) {
-         lock lk(mutex_);
+         scoped_lock_t lk(mutex_);
          BaseNotifiee<Activity,Task,true>::notifierIs(_n);
       }
       // notifications ---------------------------------------------------------------
@@ -129,7 +137,7 @@ public:
    /*=================================================================================
     * Activity standard attribute notifiee =========================================*/
    void notifieeIs(Task *_n) {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       if (_n->schedulingMode() == Config::kAutomatic) {
          _n->next_time_ = last_scheduled_time_ + autoTimeSpacing();
       } else if (_n->nextTime() == Time(Time::kNull)) {
@@ -138,12 +146,13 @@ public:
       if (_n->nextTime() > last_scheduled_time_) {
          last_scheduled_time_ = _n->nextTime();
       }
+      assert (_n->test_value_ == 32); // DEBUG
       run_queue_.push(_n);
       new_reactors_.notify_all();
    }
    
    void notifieeDel(Task *_n) const {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       Activity *me = const_cast<Activity *>(this);
       PriorityQueue<Task*,lt_TaskPtr,true>::iterator it = me->run_queue_.begin();
       for(; it != run_queue_.end(); ++it) { if (_n == *it) break; }
@@ -154,30 +163,31 @@ public:
    
    class Notifiee : public BaseNotifiee<Activity,Notifiee,true> {
    protected:
-      Notifiee(Activity::Ptr _a) : test_value_(16) {
+      Notifiee(Activity::Ptr _a) : test_value_(16) { // DEBUG
          notifierIs(_a);
       }
       
-      ~Notifiee() { lock lk(mutex_); }
+      ~Notifiee() { scoped_lock_t lk(mutex_); }
    public:
       int test_value_;
       typedef Simone::Ptr<const Notifiee> PtrConst;
       typedef Simone::Ptr<Notifiee> Ptr;
       // notifications ---------------------------------------------------------------
-      virtual void onRunStatus() {}
-      virtual void onTaskCompleted(Activity::Task *) {}
+      virtual void onRunStatus() { ABORT(); }
+      virtual void onTaskCompleted(Activity::Task *) { ABORT(); }
    };
    
    // notification support -----------------------------------------------------------
    void notifieeIs(Notifiee *_n) const {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       Activity *me = const_cast<Activity*>(this);
       assert(_n->test_value_ == 16); // DEBUG
+      // assert()
       me->notifiees_.elementIs(_n);
    }
    
    void notifieeDel(Notifiee *_n) const {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       Activity *me = const_cast<Activity*>(this);
       me->notifiees_.elementDel(_n);
    }
@@ -189,7 +199,7 @@ protected:
                                    auto_time_spacing_(0,0,0),
                                    manager_(_m) {}
    ~Activity() {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       runStatusIs(Status::kDone);
       threads_.join_all();
    }
@@ -198,15 +208,37 @@ private:
    void runActivity();
    
    void runStatusIs(Status::RunStatus _s) {
-      lock lk(mutex_);
+      scoped_lock_t lk(mutex_);
       run_status_ = _s;
       foreach(Notifiee *_n, notifiees_) { _n->onRunStatus(); }
    }
    
    void fireOnTaskCompleted(Task *task) const {
-      lock lk(mutex_);
-      foreach(Notifiee *_n, notifiees_) {
-         _n->onTaskCompleted(task);
+      scoped_lock_t lk(mutex_);
+      Set<Notifiee*,true>::const_iterator it = notifiees_.begin();
+      for (; it != notifiees_.end(); ++it) {
+         Notifiee *n = *it;
+         assert(n); // DEBUG
+         assert(task);
+         assert(n->test_value_ == 16);
+         assert(task->test_value_ == 32);
+         io_mutex.lock();
+         cerr << this << " ~ fireOnTaskCompleted (start) ~ " << this_thread::id() << endl;
+         cerr << "hey" << endl;
+         cerr << n << endl;
+         cerr << "hey" << endl;
+         *n;
+         io_mutex.unlock();
+         
+         n->onTaskCompleted(task);
+         
+         io_mutex.lock();
+         cerr << this << " ~ fireOnTaskCompleted (end) ~   " << this_thread::id() << "\n" << endl;
+         io_mutex.unlock();
+         assert(n); // DEBUG
+         assert(task);
+         assert(n->test_value_ == 16);
+         assert(task->test_value_ == 32);
       }
    }
    
@@ -221,6 +253,7 @@ private:
    Time last_scheduled_time_;
    TimeDelta auto_time_spacing_;
    const ActivityManager *const manager_;
+   
    Set<Notifiee*,true> notifiees_;
    PriorityQueue<Task*,lt_TaskPtr,true> run_queue_;
    

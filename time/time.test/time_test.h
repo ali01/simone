@@ -13,7 +13,7 @@ namespace SimoneTest {
 ====================================================================================*/
 
 
-TEST_SUITE(Time_tests, TimeFixture);
+FIXTURE_TEST_SUITE(Time_tests, TimeFixture);
 
 TEST_CASE(Time_test_basic_1) {
    CK(time_ == Time());
@@ -25,7 +25,7 @@ SUITE_END();
 ================================      TimeDelta      =================================
 ====================================================================================*/
 
-TEST_SUITE(TimeDelta_tests, TimeDeltaFixture);
+FIXTURE_TEST_SUITE(TimeDelta_tests, TimeDeltaFixture);
 
 TEST_CASE(TimeDelta_test_1) {
    long hrs = rand() % 100;

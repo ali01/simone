@@ -4,7 +4,7 @@
 namespace SimoneTest {
 
 void TestActivityTask::onRun() {
-   lock lk(mutex_);
+   scoped_lock_t lk(mutex_);
    switch (test_mode_) {
       case kA:
          answer_ = 42;

@@ -3,6 +3,9 @@
 #include "activity_manager.h"
 #include "../exception.h"
 
+// DEBUG
+boost::recursive_mutex io_mutex;
+
 namespace Simone {
 
 void Activity::runActivity() {
@@ -22,7 +25,7 @@ void Activity::runActivity() {
 }
 
 void Activity::waitForReactors() const {
-   lock lk(mutex_);
+   scoped_lock_t lk(mutex_);
    while (run_queue_.empty()) {
       new_reactors_.wait(lk);
    }

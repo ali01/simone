@@ -19,7 +19,7 @@ namespace Simone {
 
 class ActivityManager : public Map<string,Activity::Ptr,true> {
    friend class Activity;
-   typedef boost::recursive_timed_mutex::scoped_lock timed_lock;
+   typedef boost::recursive_timed_mutex::scoped_lock scoped_timed_lock;
 public:
    typedef Simone::Ptr<const ActivityManager> PtrConst;
    typedef Simone::Ptr<ActivityManager> Ptr;
@@ -35,13 +35,13 @@ public:
    }
    
    TimeDelta timeDelta() const {
-      timed_lock lk(timed_mutex_);
+      scoped_timed_lock lk(timed_mutex_);
       return time_delta_;
    }
    
    void timeDeltaIs(const TimeDelta& _delta) {
       {
-         timed_lock lk(timed_mutex_);
+         scoped_timed_lock lk(timed_mutex_);
          time_delta_ = _delta;
       }
       time_delta_changed_.notify_all();
@@ -49,7 +49,7 @@ public:
    
    void timeDeltaInc(const TimeDelta& _delta) {
       {
-         timed_lock lk(timed_mutex_);
+         scoped_timed_lock lk(timed_mutex_);
          time_delta_ += _delta;
       }
       time_delta_changed_.notify_all();
@@ -57,14 +57,14 @@ public:
    
    void timeDeltaDec(const TimeDelta& _delta) {
       {
-         timed_lock lk(timed_mutex_);
+         scoped_timed_lock lk(timed_mutex_);
          time_delta_ -= _delta;
       }
       time_delta_changed_.notify_all();
    }
 private:
    ActivityManager() : time_delta_(0,0,0) {}
-   ~ActivityManager() { timed_lock lk(timed_mutex_); }
+   ~ActivityManager() { scoped_timed_lock lk(timed_mutex_); }
    
    class ActivityReactor : public Activity::Notifiee {
    public:
@@ -110,9 +110,9 @@ inline Activity::Ptr ActivityManager::activityNew(const string &name) {
    ActivityThread::Ptr thread = ActivityThread::ActivityThreadNew(activity);
    threads_.pushBack(thread);
    
-   ActivityReactor::Ptr reactor = ActivityReactor::ActivityReactorNew(activity, this);
-   activity_reactors_.elementIs(name, reactor);
-   
+   // ActivityReactor::Ptr reactor = ActivityReactor::ActivityReactorNew(activity, this);
+   // activity_reactors_.elementIs(name, reactor);
+   // DEBUG
    return activity;
 }
 

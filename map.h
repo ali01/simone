@@ -16,7 +16,7 @@ template <typename KeyType, typename ValueType, bool _thread_safe_=false>
 class Map : public PtrInterface<Map<KeyType,ValueType,_thread_safe_> >,
             private boost::noncopyable {
 protected:
-   typedef boost::recursive_mutex::scoped_lock lock;
+   typedef boost::recursive_mutex::scoped_lock scoped_lock_t;
    mutable boost::recursive_mutex mutex_;
 public:
    // type declarations ==============================================================
@@ -34,91 +34,91 @@ public:
    // factory constructor ============================================================
    static Ptr MapNew() { return new Map(); }
    Map() {}
-   ~Map() { if (_thread_safe_) { lock lk(mutex_); } }
+   ~Map() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
    
    // iterators ======================================================================
    iterator begin() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.begin();
    }
    
    iterator end() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.end();
    }
    
    reverse_iterator rbegin() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.rbegin();
    }
    
    reverse_iterator rend() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.rend();
    }
    
    const_iterator begin() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.begin();
    }
    
    const_iterator end() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.end();
    }
    
    const_reverse_iterator rbegin() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.rbegin();
    }
    
    const_reverse_iterator rend()   const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.rend();
    }
    
    // accessors  =====================================================================
    size_t size()  const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.size();
    }
    
    bool empty() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.empty();
    }
    
    iterator element(const KeyType& _key) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.find(_key);
    }
    const_iterator element(const KeyType& _key) const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_.find(_key);
    }
    
    // mutators =======================================================================
    void elementIs(const KeyType& _key, const ValueType& _v) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       map_[_key] = _v;
    }
    
    void elementDel(iterator _it) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       map_.erase(_it);
    }
    void elementDel(const KeyType& _key) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       map_.erase(_key);
    }
    
    ValueType& operator[](const KeyType& key) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_[key];
    }
    
    const ValueType& operator[](const KeyType& key) const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return map_[key];
    }
 private:

@@ -22,7 +22,7 @@ template <typename T,
 class Set : public PtrInterface<Set<T,_thread_safe_,Compare,Allocator> >,
             private boost::noncopyable {
 protected:
-   typedef boost::recursive_mutex::scoped_lock lock;
+   typedef boost::recursive_mutex::scoped_lock scoped_lock_t;
    mutable boost::recursive_mutex mutex_;
 public: // todo: support boost_foreach
    // type declarations ==============================================================
@@ -38,88 +38,88 @@ public: // todo: support boost_foreach
    // factory constructor ============================================================
    static Ptr SetNew() { return new Set(); }
    Set() {} // allow static allocation
-   ~Set() { if (_thread_safe_) { lock lk(mutex_); } }
+   ~Set() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
    
    // iterators ======================================================================
    iterator begin() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.begin();  
    }
 
    iterator end() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.end();    
    }
 
    reverse_iterator rbegin() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.rbegin(); 
    }
 
    reverse_iterator rend() {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.rend();   
    }
 
    
    const_iterator begin() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.begin();  
    }
 
    const_iterator end() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.end();    
    }
 
    const_reverse_iterator rbegin() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.rbegin(); 
    }
 
    const_reverse_iterator rend() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.rend();   
    }
 
    
    // accessors  =====================================================================
    size_t size() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.size();  
    }
 
    bool empty() const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.empty(); 
    }
 
    
    iterator element(const T& _v) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.find(_v); 
    }
 
    const_iterator element(const T& _v) const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.find(_v); 
    }
 
    
    size_t count(const T& _v) const {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
       return set_.count(_v); 
    }
 
    
    // mutators =======================================================================
    void elementIs(const T& _v) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
        set_.insert(_v); 
    }
 
    void elementDel(const T& _v) {
-      if (_thread_safe_) { lock lk(mutex_); }
+      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
        set_.erase(_v); 
    }
 private:
