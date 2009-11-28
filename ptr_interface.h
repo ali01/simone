@@ -14,21 +14,23 @@ template <typename T>
 class PtrInterface {
    friend class Ptr<T>;
 public:
-    PtrInterface() : ref_(0) {}
-    unsigned long references() const { return ref_; }
-    inline const PtrInterface * newRef() const { ++ref_; return this; }
-    inline void deleteRef() const {
-       if (ref_ == 0) 
-          throw MemoryException("attempt to delete an object with zero references");
-       if( --ref_ == 0 ) onZeroReferences();
-    }
-    // inline void referencesDec(uint32_t dec) const
-    //                             { if((ref_ -= dec) == 0 ) onZeroReferences(); }
+   PtrInterface() : ref_(0) {}
+   unsigned long references() const { return ref_; }
+   inline const PtrInterface * newRef() const { ++ref_; return this; }
+   inline const PtrInterface * deleteRef() const {
+      if (ref_ == 0) 
+         throw MemoryException("attempt to delete an object with zero references");
+      if( --ref_ == 0 ) {
+         onZeroReferences();
+         return 0;
+      }
+      return this;
+   }
 protected:
-    virtual ~PtrInterface() {}
-    virtual void onZeroReferences() const { delete this; }
+   virtual ~PtrInterface() {}
+   virtual void onZeroReferences() const { delete this; }
 private:
-    mutable unsigned long ref_;
+   mutable unsigned long ref_;
 };
 
 }

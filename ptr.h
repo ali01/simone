@@ -15,7 +15,9 @@ public:
    Ptr(const Ptr<T>& mp) : ptr_(mp.ptr_) { if (ptr_) ptr_->newRef(); }
    ~Ptr() {
       if (ptr_) {
-         ptr_->deleteRef();
+         if (ptr_->deleteRef() == 0) {
+            ptr_ = 0;
+         }
       }
    }
    

@@ -26,6 +26,9 @@ private:
                                           task_(_t) { assert(task_); }
    ~TestActivityReactor() {
       scoped_lock_t lk(mutex_);
+      // io_mutex.lock();
+      // cout << this << "~TestActivityReactor" << this_thread::id() << endl;
+      // io_mutex.unlock();
    }
    
    TestActivityTask *task_;
@@ -45,35 +48,34 @@ public:
    void onRun();
    
    int meaningOfLifeUniverseAndEverything() const {
-      io_mutex.lock();
-      cout << this << " ~ meaningOfLife (start) ~       " << this_thread::id() << endl;
-      io_mutex.unlock();
+      // io_mutex.lock(); //COMMENT
+      // cout << this << " ~ meaningOfLife (start) ~       " << this_thread::id() << endl;
+      // io_mutex.unlock();
       
       scoped_lock_t lk(mutex_);
       while ( ! answer_is_available_bool_) {
          answer_is_available_.wait(lk);
       }
       
-      io_mutex.lock();
-      cout << this << " ~ meaningOfLife (end) ~         " << this_thread::id() << endl;
-      io_mutex.unlock();
+      // io_mutex.lock();
+      // cout << this << " ~ meaningOfLife (end) ~         " << this_thread::id() << endl;
+      // io_mutex.unlock();
       return answer_;
    }
    
    void answerIsAvailable() {
       scoped_lock_t lk(mutex_);
-      io_mutex.lock();
-      cout << this << " ~ answerIsAvailable (start) ~   " << this_thread::id() << endl;
-      io_mutex.unlock();
-      assert(test_value_ == 32); // DEBUG
+      // io_mutex.lock();
+      // cout << this << " ~ answerIsAvailable (start) ~   " << this_thread::id() << endl;
+      // io_mutex.unlock();
       
       answer_is_available_bool_ = true;
       answer_is_available_.notify_all();
       
-      assert(test_value_ == 32); // DEBUG
-      io_mutex.lock();
-      cout << this << " ~ answerIsAvailable (end) ~     " << this_thread::id() << endl;
-      io_mutex.unlock();
+      // assert(test_value_ == 32); // COMMENT
+      // io_mutex.lock();
+      // cout << this << " ~ answerIsAvailable (end) ~     " << this_thread::id() << endl;
+      // io_mutex.unlock();
    }
 private:
    TestActivityTask(Activity::Ptr _a, TestMode _m) : 
@@ -97,22 +99,23 @@ private:
 };
 
 inline void TestActivityReactor::onTaskCompleted(Activity::Task *_task) {
-   cout << "************" << endl << endl;
-   this_thread::sleep(millisec(20));
    scoped_lock_t lk(mutex_);
-   io_mutex.lock();
-   cout << this << " ~ onTaskCompleted (start) ~     " << this_thread::id() << endl;
-   io_mutex.unlock();
-   assert(_task);
-   assert(_task->test_value_ == 32); // DEBUG
+
+   // io_mutex.lock(); // COMMENT
+   // cout << this << " ~ onTaskCompleted (start) ~     " << this_thread::id() << endl;
+   // io_mutex.unlock();
+   // assert(_task);
+   // assert(_task->test_value_ == 32);
+
    if (task_ == _task) {
       task_->answerIsAvailable();
    }
-   assert(_task);
-   assert(_task->test_value_ == 32); // DEBUG
-   io_mutex.lock();
-   cout << this << " ~ onTaskCompleted (end) ~       " << this_thread::id() << endl;
-   io_mutex.unlock();
+
+   // assert(_task);
+   // assert(_task->test_value_ == 32); // COMMENT
+   // io_mutex.lock();
+   // cout << this << " ~ onTaskCompleted (end) ~       " << this_thread::id() << endl;
+   // io_mutex.unlock();
 }
 
 

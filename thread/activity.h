@@ -22,10 +22,6 @@
 using std::string;
 using std::binary_function;
 
-// DEBUG
-#warning remove
-extern boost::recursive_mutex io_mutex;
-
 namespace Simone {
 /*     forward declaration     */ class ActivityManager;
 class Activity : public PtrInterface<Activity>, private boost::noncopyable {
@@ -146,7 +142,6 @@ public:
       if (_n->nextTime() > last_scheduled_time_) {
          last_scheduled_time_ = _n->nextTime();
       }
-      assert (_n->test_value_ == 32); // DEBUG
       run_queue_.push(_n);
       new_reactors_.notify_all();
    }
@@ -163,7 +158,7 @@ public:
    
    class Notifiee : public BaseNotifiee<Activity,Notifiee,true> {
    protected:
-      Notifiee(Activity::Ptr _a) : test_value_(16) { // DEBUG
+      Notifiee(Activity::Ptr _a){
          notifierIs(_a);
       }
       
@@ -181,8 +176,6 @@ public:
    void notifieeIs(Notifiee *_n) const {
       scoped_lock_t lk(mutex_);
       Activity *me = const_cast<Activity*>(this);
-      assert(_n->test_value_ == 16); // DEBUG
-      // assert()
       me->notifiees_.elementIs(_n);
    }
    
@@ -218,27 +211,30 @@ private:
       Set<Notifiee*,true>::const_iterator it = notifiees_.begin();
       for (; it != notifiees_.end(); ++it) {
          Notifiee *n = *it;
-         assert(n); // DEBUG
-         assert(task);
-         assert(n->test_value_ == 16);
-         assert(task->test_value_ == 32);
-         io_mutex.lock();
-         cerr << this << " ~ fireOnTaskCompleted (start) ~ " << this_thread::id() << endl;
-         cerr << "hey" << endl;
-         cerr << n << endl;
-         cerr << "hey" << endl;
-         *n;
-         io_mutex.unlock();
+
+         // assert(n); // COMMENT
+         // assert(task);
+         // assert(n->test_value_ == 16);
+         // assert(task->test_value_ == 32);
+         // io_mutex.lock();
+         // cerr << this << " ~ fireOnTaskCompleted (start) ~ " << this_thread::id()
+         //                                                                   << endl;
+         // cerr << "hey" << endl;
+         // cerr << n << endl;
+         // cerr << "hey" << endl;
+         // *n;
+         // io_mutex.unlock();
          
          n->onTaskCompleted(task);
          
-         io_mutex.lock();
-         cerr << this << " ~ fireOnTaskCompleted (end) ~   " << this_thread::id() << "\n" << endl;
-         io_mutex.unlock();
-         assert(n); // DEBUG
-         assert(task);
-         assert(n->test_value_ == 16);
-         assert(task->test_value_ == 32);
+         // io_mutex.lock();
+         // cerr << this << " ~ fireOnTaskCompleted (end) ~   " << this_thread::id()
+         //                                                          << "\n" << endl;
+         // io_mutex.unlock();
+         // assert(n);
+         // assert(task);
+         // assert(n->test_value_ == 16);
+         // assert(task->test_value_ == 32);
       }
    }
    

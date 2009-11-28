@@ -45,6 +45,11 @@
    using std::stringstream;
    using std::ostringstream;
    using std::istringstream;
+
+#ifdef __THREADING__
+   #include <boost/thread/recursive_mutex.hpp>
+   extern boost::recursive_mutex io_mutex_;
+#endif
 #else   
    #define IF_DEBUG(stmt)
    #define ABORT()

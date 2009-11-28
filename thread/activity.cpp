@@ -3,9 +3,6 @@
 #include "activity_manager.h"
 #include "../exception.h"
 
-// DEBUG
-boost::recursive_mutex io_mutex;
-
 namespace Simone {
 
 void Activity::runActivity() {

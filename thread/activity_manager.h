@@ -110,9 +110,8 @@ inline Activity::Ptr ActivityManager::activityNew(const string &name) {
    ActivityThread::Ptr thread = ActivityThread::ActivityThreadNew(activity);
    threads_.pushBack(thread);
    
-   // ActivityReactor::Ptr reactor = ActivityReactor::ActivityReactorNew(activity, this);
-   // activity_reactors_.elementIs(name, reactor);
-   // DEBUG
+   ActivityReactor::Ptr reactor = ActivityReactor::ActivityReactorNew(activity, this);
+   activity_reactors_.elementIs(name, reactor);
    return activity;
 }
 
