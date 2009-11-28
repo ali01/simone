@@ -16,6 +16,7 @@
 using std::vector;
 
 namespace Simone {
+namespace thread {
 
 class ActivityManager : public Map<string,Activity::Ptr,true> {
    friend class Activity;
@@ -64,7 +65,7 @@ public:
    }
 private:
    ActivityManager() : time_delta_(0,0,0) {}
-   ~ActivityManager() { scoped_timed_lock lk(timed_mutex_); }
+   virtual ~ActivityManager() { scoped_timed_lock lk(timed_mutex_); }
    
    class ActivityReactor : public Activity::Notifiee {
    public:
@@ -119,4 +120,6 @@ inline void ActivityManager::activityDel(const string& name) {
    this->elementDel(name);
 }
 
-} /* end of namespoce Chron */
+
+} /* end of namespace thread */
+} /* end of namespoce Simone */

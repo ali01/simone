@@ -4,7 +4,10 @@
 #include <algorithm>
 #include <functional>
 
-#include <boost/thread/recursive_mutex.hpp>
+#include "thread/recursive_mutex.h"
+#include "thread/scoped_lock.h"
+using Simone::thread::RecursiveMutex;
+using Simone::thread::ScopedLock;
 
 #include "ptr.h"
 #include "deque.h"
@@ -21,8 +24,7 @@ template <typename T,
           bool _thread_safe_=false>
 class PriorityQueue : private Deque<T,_thread_safe_> {
 protected:
-   typedef boost::recursive_mutex::scoped_lock scoped_lock_t;
-   mutable boost::recursive_mutex mutex_;
+   mutable RecursiveMutex mutex_;
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const PriorityQueue<T,Compare,_thread_safe_> > PtrConst;
@@ -50,19 +52,19 @@ public:
    
    // accessors  =====================================================================
    size_t size() const {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       return queue_.size();
    }
    
    bool empty() const {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       return queue_.empty();
    }
    
    using Deque<T,_thread_safe_>::element;
    
    const T& front() {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       return queue_.top();
    }
    
@@ -78,12 +80,12 @@ public:
    }
    
    void push(const T& _e) {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       queue_.push(_e);
    }
    
    void pop() {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       queue_.pop();
    }
    
@@ -91,9 +93,11 @@ public:
       Deque<T,_thread_safe_>::clear();
       heapify();
    }
+   
+   RecursiveMutex& mutex() const { return mutex_; }
 private:
    void heapify() {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); }
+      if (_thread_safe_) { ScopedLock lk(mutex_); }
       std::make_heap(Deque<T,_thread_safe_>::begin(),
                      Deque<T,_thread_safe_>::end(),
                      Compare());

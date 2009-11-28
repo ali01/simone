@@ -1,11 +1,12 @@
 #pragma once
+#include "../thread.h"
 #include "../../test.h"
-#include "../../thread.h"
 #include "../../time.h"
 
 #include "thread_test_setup.h"
 
 using namespace Simone;
+using namespace Simone::thread;
 
 namespace SimoneTest {
 
@@ -60,6 +61,45 @@ TEST_CASE(_4) { // different activities
    CK_EQUAL(test_task_2->meaningOfLifeUniverseAndEverything(), 2737);
    CK_EQUAL(test_task_3->meaningOfLifeUniverseAndEverything(), 38193);
    CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
+   
+   // test_task_1 = TestActivityTask::TestActivityTaskNew(activity_4,
+   //                                                     TestActivityTask::kA);
+   // test_task_2 = TestActivityTask::TestActivityTaskNew(activity_3,
+   //                                                     TestActivityTask::kB);
+   // test_task_3 = TestActivityTask::TestActivityTaskNew(activity_2,
+   //                                                     TestActivityTask::kC);
+   // test_task_4 = TestActivityTask::TestActivityTaskNew(activity_1,
+   //                                                     TestActivityTask::kD);
+   // CK_EQUAL(test_task_1->meaningOfLifeUniverseAndEverything(), 42);
+   // CK_EQUAL(test_task_2->meaningOfLifeUniverseAndEverything(), 2737);
+   // CK_EQUAL(test_task_3->meaningOfLifeUniverseAndEverything(), 38193);
+   // CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
+   // 
+   // test_task_4 = TestActivityTask::TestActivityTaskNew(activity_1,
+   //                                                     TestActivityTask::kA);
+   // test_task_3 = TestActivityTask::TestActivityTaskNew(activity_2,
+   //                                                     TestActivityTask::kB);
+   // test_task_2 = TestActivityTask::TestActivityTaskNew(activity_3,
+   //                                                     TestActivityTask::kC);
+   // test_task_1 = TestActivityTask::TestActivityTaskNew(activity_4,
+   //                                                     TestActivityTask::kD);
+   // CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 42);
+   // CK_EQUAL(test_task_3->meaningOfLifeUniverseAndEverything(), 2737);
+   // CK_EQUAL(test_task_2->meaningOfLifeUniverseAndEverything(), 38193);
+   // CK_EQUAL(test_task_1->meaningOfLifeUniverseAndEverything(), 29218);
+   // 
+   // test_task_1 = TestActivityTask::TestActivityTaskNew(activity_1,
+   //                                                     TestActivityTask::kA);
+   // test_task_2 = TestActivityTask::TestActivityTaskNew(activity_2,
+   //                                                     TestActivityTask::kB);
+   // test_task_3 = TestActivityTask::TestActivityTaskNew(activity_3,
+   //                                                     TestActivityTask::kC);
+   // test_task_4 = TestActivityTask::TestActivityTaskNew(activity_4,
+   //                                                     TestActivityTask::kD);
+   // CK_EQUAL(test_task_1->meaningOfLifeUniverseAndEverything(), 42);
+   // CK_EQUAL(test_task_2->meaningOfLifeUniverseAndEverything(), 2737);
+   // CK_EQUAL(test_task_3->meaningOfLifeUniverseAndEverything(), 38193);
+   // CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
 }
 
 SUITE_END();

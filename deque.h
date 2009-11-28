@@ -32,7 +32,7 @@ public:
    // factory constructor ============================================================
    static Ptr DequeNew() { return new Deque(); }
    Deque() {}
-   ~Deque() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
+   virtual ~Deque() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
    
    // iterators ======================================================================
    iterator begin()  {

@@ -8,7 +8,10 @@
 #include "utility.h"
 #include "exception.h"
 
-#include <boost/thread/recursive_mutex.hpp>
+#include "thread/scoped_lock.h"
+#include "thread/recursive_mutex.h"
+using Simone::thread::RecursiveMutex;
+using Simone::thread::ScopedLock;
 
 namespace Simone {
 
@@ -21,7 +24,7 @@ class BaseNotifiee :
 protected:
    BaseNotifiee() : strongly_ref_(true) {}
    virtual ~BaseNotifiee() {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       if (notifier_) {
          notifier_->notifieeDel(static_cast<ChildNotifiee*>(this));
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
@@ -31,8 +34,7 @@ protected:
    typename Notifier::Ptr notifier_;
    bool                   strongly_ref_;
    
-   mutable boost::recursive_mutex mutex_;
-   typedef boost::recursive_mutex::scoped_lock scoped_lock_t;
+   mutable RecursiveMutex mutex_;
    
 public:
    typedef Simone::Ptr<const BaseNotifiee<Notifier,ChildNotifiee,_thread_safe_> >
@@ -40,17 +42,17 @@ public:
    typedef Simone::Ptr<BaseNotifiee<Notifier,ChildNotifiee,_thread_safe_> > Ptr;
    
    typename Notifier::PtrConst notifier() const {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       return notifier_;
    }
    
    typename Notifier::Ptr notifier() {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       return notifier_;
    }
    
    void notifierIs(const typename Notifier::Ptr& _n) {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       if (notifier_ == _n) { return; }
       if (notifier_) {
          if ( ! stronglyReferencing()) { notifier_->newRef(); }
@@ -65,12 +67,12 @@ public:
    }
    
    bool stronglyReferencing() const {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       return strongly_ref_;
    }
    
    void stronglyReferencingIs(bool _s) {
-      if (_thread_safe_) { scoped_lock_t lk(mutex_); };
+      if (_thread_safe_) { ScopedLock lk(mutex_); };
       if(stronglyReferencing() == _s) { return; }
       strongly_ref_ = _s;
       if (notifier_) {

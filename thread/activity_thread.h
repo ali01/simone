@@ -9,6 +9,7 @@
 #include <boost/thread/thread.hpp>
 
 namespace Simone {
+namespace thread {
 
 class ActivityThread : public PtrInterface<ActivityThread>, boost::noncopyable {
 public:
@@ -24,11 +25,11 @@ public:
       return runnable_.activity();
    }
    
-   Activity::Status::RunStatus runStatus() const {
+   Activity::status::RunStatus runStatus() const {
       return activity()->runStatus();
    }
    
-   void runStatusIs(Activity::Config::RunStatus _s) {
+   void runStatusIs(Activity::config::RunStatus _s) {
       activity()->runStatusIs(_s);
    }
 protected:
@@ -45,7 +46,7 @@ private:
       Activity::Ptr activity() const { return activity_; }
       
       void operator()() {
-         activity_->runStatusIs(Activity::Config::kRunning);
+         activity_->runStatusIs(Activity::config::kRunning);
       }
    private:
       Activity::Ptr activity_;
@@ -56,4 +57,5 @@ private:
    boost::thread     thread_;
 };
 
+} /* end of namespace thread */
 } /* end of namespace Simone */

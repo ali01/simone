@@ -4,9 +4,14 @@
 #include "../exception.h"
 
 namespace Simone {
+namespace thread {
+   
+#ifdef __DEBUG__
+boost::recursive_mutex io_debug_mutex_;
+#endif
 
 void Activity::runActivity() {
-   runStatusIs(Status::kRunning);
+   runStatusIs(status::kRunning);
    while (true) {
       waitForReactors();
       Task *n = run_queue_.front();
@@ -14,30 +19,30 @@ void Activity::runActivity() {
       n->onRun();
       fireOnTaskCompleted(n);
       run_queue_.pop();
-      if (runStatus() == Status::kStopping) {
-         runStatusIs(Status::kDone);
+      if (runStatus() == status::kStopping) {
+         runStatusIs(status::kDone);
          break;
       }
    }
 }
 
 void Activity::waitForReactors() const {
-   scoped_lock_t lk(mutex_);
+   ScopedLock lk(mutex_);
    while (run_queue_.empty()) {
-      new_reactors_.wait(lk);
+      new_reactors_.wait(lk.boost_lock());
    }
 }
 
 void Activity::sleepUntil(const Time& _time) {
    if (_time <= Time(Clock::kMicrosecUniversal)) { return; }
-   runStatusIs(Status::kWaiting);
+   runStatusIs(status::kWaiting);
    if (manager_) {
       timed_lock lk(manager_->timed_mutex_, absoluteTime(_time).ptime());
       while (timeDelta(_time) > milliseconds(0) && lk.owns_lock()) {
          manager_->time_delta_changed_.timed_wait(lk, absoluteTime(_time).ptime());
       }
    } else { this_thread::sleep(timeDelta(_time)); }
-   runStatusIs(Status::kRunning);
+   runStatusIs(status::kRunning);
 }
 
 TimeDelta Activity::timeDelta(const Time& _time) const {
@@ -51,4 +56,5 @@ Time Activity::absoluteTime(const Time& _time) const {
    return _time + delta;
 }
 
-} //end namespace Simone
+} /* end of namespace thread */
+} /* end of namespace Simone */

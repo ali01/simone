@@ -1,10 +1,13 @@
 #include "thread_test_setup.h"
 #include "../../test.h"
 
+using namespace Simone;
+using namespace Simone::thread;
+
 namespace SimoneTest {
 
 void TestActivityTask::onRun() {
-   scoped_lock_t lk(mutex_);
+   ScopedLock lk(mutex_);
    switch (test_mode_) {
       case kA:
          answer_ = 42;

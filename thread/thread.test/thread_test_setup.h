@@ -1,10 +1,10 @@
 #pragma once
-
+#include "../thread.h"
 #include "../../test.h"
 #include "../../ptr.h"
-#include "../../thread.h"
 
 using namespace Simone;
+using namespace Simone::thread;
 
 namespace SimoneTest {
 
@@ -18,14 +18,14 @@ public:
       return new TestActivityReactor(_a, _t);
    }
    
-   void onRunStatus() { /*scoped_lock_t lk(mutex_);*/ }
+   void onRunStatus() { /*ScopedLock lk(mutex_);*/ }
    void onTaskCompleted(Activity::Task *_task);
 private:
    TestActivityReactor(Activity::Ptr _a, TestActivityTask *_t) :
                                           Activity::Notifiee(_a),
                                           task_(_t) { assert(task_); }
    ~TestActivityReactor() {
-      scoped_lock_t lk(mutex_);
+      ScopedLock lk(mutex_);
       // io_mutex.lock();
       // cout << this << "~TestActivityReactor" << this_thread::id() << endl;
       // io_mutex.unlock();
@@ -52,9 +52,9 @@ public:
       // cout << this << " ~ meaningOfLife (start) ~       " << this_thread::id() << endl;
       // io_mutex.unlock();
       
-      scoped_lock_t lk(mutex_);
+      ScopedLock lk(mutex_);
       while ( ! answer_is_available_bool_) {
-         answer_is_available_.wait(lk);
+         answer_is_available_.wait(lk.boost_lock());
       }
       
       // io_mutex.lock();
@@ -64,7 +64,7 @@ public:
    }
    
    void answerIsAvailable() {
-      scoped_lock_t lk(mutex_);
+      ScopedLock lk(mutex_);
       // io_mutex.lock();
       // cout << this << " ~ answerIsAvailable (start) ~   " << this_thread::id() << endl;
       // io_mutex.unlock();
@@ -87,7 +87,7 @@ private:
       notifierIs(_a);
    }
    ~TestActivityTask() {
-      scoped_lock_t lk(mutex_);
+      ScopedLock lk(mutex_);
    }
    TestActivityReactor::Ptr reactor_;
    TestMode test_mode_;
@@ -99,7 +99,7 @@ private:
 };
 
 inline void TestActivityReactor::onTaskCompleted(Activity::Task *_task) {
-   scoped_lock_t lk(mutex_);
+   ScopedLock lk(mutex_);
 
    // io_mutex.lock(); // COMMENT
    // cout << this << " ~ onTaskCompleted (start) ~     " << this_thread::id() << endl;

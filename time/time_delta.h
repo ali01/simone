@@ -12,7 +12,6 @@ namespace Simone {
 class TimeDelta : private boost::less_than_comparable<TimeDelta,
                                boost::equality_comparable<TimeDelta> > {
    friend class Time;
-   friend struct this_thread;
 public:   
    TimeDelta(double sec_dbl){
       long sec   = static_cast<long>(floor(sec_dbl));
@@ -91,6 +90,7 @@ public:
       return *this;
    }
    
+   boost::posix_time::time_duration boost_time_duration() const { return delta_; }
 protected:
    TimeDelta(boost::posix_time::time_duration rhs) : delta_(rhs.hours(),
                                                      rhs.minutes(),

@@ -1,4 +1,7 @@
 #include "activity_manager.h"
 
-namespace Simone {} /* end of namespace Simone */
+namespace Simone {
+namespace thread {
 
+} /* end of namespace thread */
+} /* end of namespace Simone */

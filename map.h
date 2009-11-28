@@ -34,7 +34,7 @@ public:
    // factory constructor ============================================================
    static Ptr MapNew() { return new Map(); }
    Map() {}
-   ~Map() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
+   virtual ~Map() { if (_thread_safe_) { scoped_lock_t lk(mutex_); } }
    
    // iterators ======================================================================
    iterator begin() {
