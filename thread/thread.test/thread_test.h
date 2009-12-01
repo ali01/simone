@@ -20,9 +20,6 @@ TEST_CASE(_1) {
 }
 
 TEST_CASE(_2) { // sequential tasks
-   io_debug_mutex_.lock();
-   cout << "starting test case 2" << endl;
-   io_debug_mutex_.unlock(); // DEBUG
    test_task_1 = TestActivityTask::TestActivityTaskNew(activity_1,
                                                        TestActivityTask::kA);
    test_task_2 = TestActivityTask::TestActivityTaskNew(activity_1,
@@ -61,6 +58,10 @@ TEST_CASE(_4) { // different activities
                                                        TestActivityTask::kC);
    test_task_4 = TestActivityTask::TestActivityTaskNew(activity_4,
                                                        TestActivityTask::kD);
+   CK_EQUAL(test_task_1->meaningOfLifeUniverseAndEverything(), 42);
+   CK_EQUAL(test_task_2->meaningOfLifeUniverseAndEverything(), 2737);
+   CK_EQUAL(test_task_3->meaningOfLifeUniverseAndEverything(), 38193);
+   CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
 }
 
 SUITE_END();

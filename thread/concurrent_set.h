@@ -117,7 +117,6 @@ public:
    }
 
    void elementDel(const T& _v) {
-      ScopedLock lk(this->mutex());
       set_.erase(_v);
    }
 private:

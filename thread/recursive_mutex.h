@@ -74,9 +74,6 @@ private:
       mutex_->lock();
       if (owns_mutex_) {
          mutex_->unlock();
-         io_debug_mutex_.lock();
-         cout << "***************** " << mutex_ << endl; // DEBUG
-         io_debug_mutex_.unlock();
          delete mutex_;
          owns_mutex_ = false; // mutex cannot be reinitialized
       } else { mutex_->unlock(); }

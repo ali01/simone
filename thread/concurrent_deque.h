@@ -138,17 +138,14 @@ public:
    }
 
    void popFront() {
-      ScopedLock lk(this->mutex());
       deque_.pop_front(); 
    }
 
    void popBack() {
-      ScopedLock lk(this->mutex());
       deque_.pop_back(); 
    }
 
    void clear() {
-      ScopedLock lk(this->mutex());
       deque_.clear(); 
    }
 

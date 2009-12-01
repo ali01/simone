@@ -92,7 +92,7 @@ public:
    }
    
    void pop() {
-      ScopedLock lk(this->mutex());
+      // TODO: Think about sync issues. locking this-> mutex causes deadlock
       queue_.pop();
    }
    

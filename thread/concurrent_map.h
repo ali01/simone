@@ -102,7 +102,6 @@ public:
       map_.erase(_it);
    }
    void elementDel(const KeyType& _key) {
-      ScopedLock lk(this->mutex());
       map_.erase(_key);
    }
    
