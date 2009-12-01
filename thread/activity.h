@@ -195,8 +195,8 @@ public:
       typedef Simone::Ptr<const Notifiee> PtrConst;
       typedef Simone::Ptr<Notifiee> Ptr;
       // notifications ---------------------------------------------------------------
-      virtual void onRunStatus()=0;
-      virtual void onTaskCompleted(Activity::Task::Ptr) { ABORT(); } // todo: =0
+      virtual void onRunStatus() { ABORT(); }
+      virtual void onTaskCompleted(Activity::Task::Ptr) =0; // todo: =0
    };
    
    // notification support -----------------------------------------------------------
