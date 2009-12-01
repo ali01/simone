@@ -14,16 +14,21 @@ public:
    typedef Simone::Ptr<const TestActivityReactor> PtrConst;
    typedef Simone::Ptr<TestActivityReactor> Ptr;
    
-   static Ptr TestActivityReactorNew(Activity::Ptr _a, TestActivityTask *_t) {
+   static Ptr TestActivityReactorNew(Activity::Ptr _a,
+                                     Simone::Ptr<TestActivityTask> _t) {
       return new TestActivityReactor(_a, _t);
    }
    
    void onRunStatus() { /*ScopedLock lk(this->mutex());*/ }
    void onTaskCompleted(Activity::Task::Ptr);
 private:
-   TestActivityReactor(Activity::Ptr _a, TestActivityTask *_t) :
+   TestActivityReactor(Activity::Ptr _a, Simone::Ptr<TestActivityTask> _t) :
                                           Activity::Notifiee(_a),
-                                          task_(_t) { assert(task_); }
+                                          task_(_t) {
+      assert(task_);
+      notifierIs(_a);
+   }
+   
    ~TestActivityReactor() {
       ScopedLock lk(this->mutex());
       // io_mutex.lock();
@@ -60,7 +65,6 @@ public:
       }
       while ( ! ready) {
          this_thread::sleep(milliseconds(10));
-         
          {
             ScopedLock lk(this->mutex());
             ready = answer_is_available_bool_;
@@ -81,7 +85,7 @@ public:
       // io_mutex.unlock();
       
       answer_is_available_bool_ = true;
-      answer_is_available_.notify_all();
+      // answer_is_available_.notify_all();
       
       // assert(test_value_ == 32); // COMMENT
       // io_mutex.lock();
@@ -97,9 +101,11 @@ private:
       assert(_a);
       notifierIs(_a);
    }
+   
    ~TestActivityTask() {
       ScopedLock lk(this->mutex());
    }
+   
    TestActivityReactor::Ptr reactor_;
    TestMode test_mode_;
    

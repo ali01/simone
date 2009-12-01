@@ -118,12 +118,13 @@ inline Activity::Ptr ActivityManager::activity(const string &name) const {
 }
 
 inline Activity::Ptr ActivityManager::activityNew(const string &name) {
+	return NULL;
    Activity::Ptr activity = (*this)[name];
    if (activity) { throw NameInUseException(name); }
    
    activity = Activity::ActivityNew(this);
    (*this)[name] = activity;
-   
+  
    ActivityThread::Ptr thread = ActivityThread::ActivityThreadNew(activity);
    threads_.pushBack(thread);
    

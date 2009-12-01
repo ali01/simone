@@ -167,13 +167,13 @@ public:
          last_scheduled_time_ = _n->nextTime();
       }
       run_queue_.push(_n);
-      new_reactors_.notify_all();
+      // new_reactors_.notify_all();
    }
    
    void notifieeDel(Task::Ptr _n) const {
       ScopedLock lk(this->mutex());
       ScopedLock queue_lock(run_queue_.mutex());
-      Activity *me = const_cast<Activity *>(this);
+      Activity *me = const_cast<Activity*>(this);
       ConcurrentPriorityQueue<Task::Ptr,lt_TaskPtr>::iterator it =
                                                                me->run_queue_.begin();
       for(; it != run_queue_.end(); ++it) { if (_n == *it) break; }
@@ -186,7 +186,6 @@ public:
                     public ConcurrentCollectionElement {
    protected:
       Notifiee(Activity::Ptr _a){
-         notifierIs(_a);
          stronglyReferencingIs(false);
       }
       
@@ -195,8 +194,8 @@ public:
       typedef Simone::Ptr<const Notifiee> PtrConst;
       typedef Simone::Ptr<Notifiee> Ptr;
       // notifications ---------------------------------------------------------------
-      virtual void onRunStatus() { ABORT(); }
-      virtual void onTaskCompleted(Activity::Task::Ptr) =0; // todo: =0
+      virtual void onRunStatus() { ABORT(); }  // todo: =0
+      virtual void onTaskCompleted(Activity::Task::Ptr)  { ABORT(); }
    };
    
    // notification support -----------------------------------------------------------
