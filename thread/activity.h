@@ -43,6 +43,8 @@ public:
    typedef Simone::Ptr<const Activity> PtrConst;
    typedef Simone::Ptr<Activity> Ptr;
    
+   static const long kSleepTime = 10;
+   
    struct config {
       enum RunStatus      { kRunning, kDone      };
       enum SchedulingMode { kDefault, kAutomatic };
@@ -66,10 +68,12 @@ public:
          case config::kRunning:
             if (runStatus() == status::kReady) { runActivity(); }
             else if (runStatus() == status::kDone) {
-               throw InvalidOperationException("activity execution complete");
+               throw InvalidOperationException(__FILE__, __LINE__, "activity execution complete");
             }
             break;
-         default: throw AttributeNotSupportedException();
+         default: throw AttributeNotSupportedException(__FILE__,
+                                                       __LINE__,
+                                                       "attribute not supported!");
       }
    }
    

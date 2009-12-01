@@ -118,9 +118,8 @@ inline Activity::Ptr ActivityManager::activity(const string &name) const {
 }
 
 inline Activity::Ptr ActivityManager::activityNew(const string &name) {
-	return NULL;
    Activity::Ptr activity = (*this)[name];
-   if (activity) { throw NameInUseException(name); }
+   if (activity) { throw NameInUseException(__FILE__, __LINE__, "name in use"); }
    
    activity = Activity::ActivityNew(this);
    (*this)[name] = activity;

@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "../globals.h"
    using std::stringstream;
 using std::string;
 using std::cerr;
@@ -17,11 +18,9 @@ public:
    string what() const { return what_; }
    virtual ~Exception() {}
 protected:
-   Exception(char const * str) : what_(str) {
-      cerr << "exception: " << str << endl;
-   }
-   Exception(string str) : what_(str) {
-      cerr << "exception: " << str << endl;
+   Exception(string filename, uint32_t line, string msg) : what_(msg) {
+      cerr << filename << ":" << line << endl;
+      cerr << "exception: " << msg << endl;
    }
 private:
    string what_;
@@ -29,106 +28,125 @@ private:
 
 class IncompleteInitializationException : public Exception {
 public:
-   IncompleteInitializationException(string what="") : Exception(what) {}
+   IncompleteInitializationException(string filename, uint32_t line, string msg) :
+                                                   Exception(filename, line, msg) {}
 };
 
 class NoImplementationException : public Exception {
 public:
-   NoImplementationException(string what="") : Exception(what) {} 
+   NoImplementationException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {} 
 };
 
 class AttributeNotSupportedException : public NoImplementationException {
 public:
-   AttributeNotSupportedException(string what="") : NoImplementationException(what) {} 
+   AttributeNotSupportedException(string filename, uint32_t line, string msg) :
+                                       NoImplementationException(filename, line, msg) {} 
 };
 
 class UnknownTypeException : public Exception {
 public:
-   UnknownTypeException( string what="" )  : Exception(what) {}
+   UnknownTypeException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 class UnknownAttrException : public Exception {
 public:
-   UnknownAttrException( string what="" )  : Exception(what) {}
+   UnknownAttrException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 class UnknownDelimiterException : public Exception {
 public:
-   UnknownDelimiterException( string what="" )  : Exception(what) {}
+   UnknownDelimiterException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 class UnknownArgException : public Exception {
 public:
-   UnknownArgException( string what="" )  : Exception(what) {}
+   UnknownArgException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 
 class RangeException : public Exception {
 public:
-   RangeException( string what="" ) : Exception(what) {} 
+   RangeException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {} 
 };
 
 class MemoryException : public Exception {
  public:
-   MemoryException( string what="" ) : Exception(what) {} 
+   MemoryException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {} 
 };
 
 class StorageException : public Exception {
  public:
-   StorageException( string what="" ) : Exception(what) {}
+   StorageException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 class NameInUseException : public Exception {
 public:
-   NameInUseException( string what="" ) : Exception( what ) {} 
+   NameInUseException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {} 
    
 };
 
 class IllegalNameException: public Exception {
  public:
-   IllegalNameException( string what="" ): Exception( what ) {}
+   IllegalNameException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
    
 };
 
 class EntityNotFoundException : public Exception {
 public:
-   EntityNotFoundException( string what="" ) : Exception( what ) {} 
+   EntityNotFoundException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {} 
    
 };
 
 
 class MemoryLimitExceededException : public MemoryException {
 public:
-   MemoryLimitExceededException(string what="") : MemoryException(what) {}
+   MemoryLimitExceededException(string filename, uint32_t line, string msg) :
+                                                MemoryException(filename, line, msg) {}
    
 };
 
 class ReadOnlyException : public Exception {
 public:
-   ReadOnlyException(string what="") : Exception(what) {}
+   ReadOnlyException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
    
 };
 
 class InvalidFormattingException: public Exception {
 public:
-   InvalidFormattingException(string what="") : Exception(what) {}
+   InvalidFormattingException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
    
 };
 
 class InvalidOperationException: public Exception {
 public:
-   InvalidOperationException(string what="") : Exception(what) {}
+   InvalidOperationException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
    
 };
 
 class InvalidValueException: public Exception {
 public:
-   InvalidValueException(string what="") : Exception(what) {}
+   InvalidValueException(string filename, uint32_t line, string msg) :
+                                                      Exception(filename, line, msg) {}
 };
 
 class NullPointerException : public InvalidValueException {
 public:
-   NullPointerException(string what="") : InvalidValueException(what) {}
+   NullPointerException(string filename, uint32_t line, string msg) :
+                                          InvalidValueException(filename, line, msg) {}
 };
 
 } /* end of namespace Simone */

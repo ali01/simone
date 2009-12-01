@@ -64,7 +64,7 @@ public:
          ready = answer_is_available_bool_;
       }
       while ( ! ready) {
-         this_thread::sleep(milliseconds(10));
+         this_thread::sleep(milliseconds(Activity::kSleepTime));
          {
             ScopedLock lk(this->mutex());
             ready = answer_is_available_bool_;

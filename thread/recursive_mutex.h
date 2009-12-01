@@ -38,7 +38,7 @@ public:
          stringstream ss;
          ss << "attempt to unlock a mutex with a lock count of zero.\n";
          ss << "Count: " << lockCount() << endl;
-         throw InvalidOperationException(ss.str());
+         throw InvalidOperationException(__FILE__, __LINE__, ss.str());
       }
       lock_count_--;
    }
@@ -83,7 +83,7 @@ private:
          ss << "attempt to combine mutexes with non-zero lock counts\n";
          ss << "Parent lock count: " << parent.lockCount() << endl;
          ss << "Child lock count:  " << child.lockCount() << endl;
-         throw InvalidOperationException(ss.str());
+         throw InvalidOperationException(__FILE__, __LINE__, ss.str());
       }
    }
    

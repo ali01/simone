@@ -31,7 +31,7 @@ public:
          case Clock::kMicrosecUniversal:
             ptime_ = boost::posix_time::microsec_clock::universal_time();
             break;
-         default: throw AttributeNotSupportedException("clock_type unknown");
+         default: throw AttributeNotSupportedException(__FILE__, __LINE__, "clock_type unknown");
       }
    }
    
@@ -55,7 +55,7 @@ public:
          case kNull:
             ptime_ = boost::posix_time::ptime(boost::date_time::not_a_date_time);
             break;
-         default: throw AttributeNotSupportedException("special_value unknown");
+         default: throw AttributeNotSupportedException(__FILE__, __LINE__, "special_value unknown");
       }
    }
    

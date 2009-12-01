@@ -25,7 +25,7 @@ public:
    
    virtual const PtrInterface * deleteRef() const {
       if (ref_ == 0) {
-         throw MemoryException("attempt to delete an object with zero references");
+         throw MemoryException(__FILE__, __LINE__, "attempt to delete an object with zero references");
       }
       if( --ref_ == 0 ) {
          onZeroReferences();

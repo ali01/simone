@@ -25,7 +25,7 @@ void Activity::runActivity() {
 void Activity::waitForReactors() const {
    // ScopedLock lk(this->mutex());
    while (run_queue_.empty()) {
-      this_thread::sleep(milliseconds(10));
+      this_thread::sleep(milliseconds(kSleepTime));
       // new_reactors_.wait(lk);
    }
    // TODO: write wrapper for ConditionVariable

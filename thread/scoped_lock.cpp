@@ -11,7 +11,7 @@ ScopedLock::ScopedLock(RecursiveMutex& _l) : mutex_(&_l), owns_lock_(true) {
       stringstream ss;
       cerr << __FILE__ << ":" << __LINE__ << endl;
       ss << "null pointer passed to ScopedLock's constructor";
-      throw NullPointerException(ss.str());
+      throw NullPointerException(__FILE__, __LINE__, ss.str());
    }
 }
 
@@ -26,7 +26,7 @@ void ScopedLock::lock() {
       stringstream ss;
       cerr << __FILE__ << ":" << __LINE__ << endl;
       ss << "attempt to recursively lock a mutex through ScopedLock";
-      throw Simone::InvalidOperationException(ss.str());
+      throw Simone::InvalidOperationException(__FILE__, __LINE__, ss.str());
    }
    mutex_->lock();
    owns_lock_ = true;
@@ -37,7 +37,7 @@ void ScopedLock::unlock() {
       stringstream ss;
       cerr << __FILE__ << ":" << __LINE__ << endl;
       ss << "attempt to unlock an already unlocked mutex through ScopedLock";
-      throw Simone::InvalidOperationException(ss.str());
+      throw Simone::InvalidOperationException(__FILE__, __LINE__, ss.str());
    }
    mutex_->unlock();
    owns_lock_ = false;
