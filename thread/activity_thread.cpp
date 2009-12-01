@@ -1,7 +1,7 @@
 #include "activity_thread.h"
 #include "../utility.h"
 
-#include "../ptr.h"
+#include "../ptr_interface.h"
 #include "../exception.h"
 
 #include "activity.h"

@@ -114,11 +114,11 @@ public:
   explicit seconds(long s) : TimeDelta(0, 0, s) {}
 };
 
-template <int64_t sec_fraction>
+template <boost::int64_t sec_fraction>
 class subsecond_duration : public TimeDelta {
    typedef boost::posix_time::time_res_traits traits_type;
 public:
-   explicit subsecond_duration(int64_t ss) :
+   explicit subsecond_duration(boost::int64_t ss) :
       TimeDelta(0, 0, 0, ss * traits_type::res_adjust() / sec_fraction) {}
 };
 

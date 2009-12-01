@@ -3,7 +3,12 @@
 
 #pragma once
 #include <string>
+#include <iostream>
+#include <sstream>
+   using std::stringstream;
 using std::string;
+using std::cerr;
+using std::endl;
 
 namespace Simone {
 
@@ -12,8 +17,12 @@ public:
    string what() const { return what_; }
    virtual ~Exception() {}
 protected:
-   Exception(char const * str) : what_(str) {}
-   Exception(string str) : what_(str) {}
+   Exception(char const * str) : what_(str) {
+      cerr << "exception: " << str << endl;
+   }
+   Exception(string str) : what_(str) {
+      cerr << "exception: " << str << endl;
+   }
 private:
    string what_;
 };

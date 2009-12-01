@@ -1,7 +1,7 @@
 #pragma once
 #include "../thread.h"
 #include "../../test.h"
-#include "../../ptr.h"
+#include "../../ptr_interface.h"
 
 using namespace Simone;
 using namespace Simone::thread;
@@ -18,20 +18,20 @@ public:
       return new TestActivityReactor(_a, _t);
    }
    
-   void onRunStatus() { /*ScopedLock lk(mutex_);*/ }
-   void onTaskCompleted(Activity::Task *_task);
+   void onRunStatus() { /*ScopedLock lk(this->mutex());*/ }
+   void onTaskCompleted(Activity::Task::Ptr);
 private:
    TestActivityReactor(Activity::Ptr _a, TestActivityTask *_t) :
                                           Activity::Notifiee(_a),
                                           task_(_t) { assert(task_); }
    ~TestActivityReactor() {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       // io_mutex.lock();
       // cout << this << "~TestActivityReactor" << this_thread::id() << endl;
       // io_mutex.unlock();
    }
    
-   TestActivityTask *task_;
+   Simone::Ptr<TestActivityTask> task_;
 };
 
 class TestActivityTask : public Activity::Task {
@@ -52,9 +52,19 @@ public:
       // cout << this << " ~ meaningOfLife (start) ~       " << this_thread::id() << endl;
       // io_mutex.unlock();
       
-      ScopedLock lk(mutex_);
-      while ( ! answer_is_available_bool_) {
-         answer_is_available_.wait(lk.boost_lock());
+      // boost::recursive_mutex::scoped_lock lk(this->mutex());
+      bool ready;
+      {
+         ScopedLock lk(this->mutex());
+         ready = answer_is_available_bool_;
+      }
+      while ( ! ready) {
+         this_thread::sleep(milliseconds(10));
+         {
+            ScopedLock lk(this->mutex());
+            ready = answer_is_available_bool_;
+         }
+         // answer_is_available_.wait(lk); // TODO: implement ConditionVars
       }
       
       // io_mutex.lock();
@@ -64,7 +74,7 @@ public:
    }
    
    void answerIsAvailable() {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       // io_mutex.lock();
       // cout << this << " ~ answerIsAvailable (start) ~   " << this_thread::id() << endl;
       // io_mutex.unlock();
@@ -87,7 +97,7 @@ private:
       notifierIs(_a);
    }
    ~TestActivityTask() {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
    }
    TestActivityReactor::Ptr reactor_;
    TestMode test_mode_;
@@ -98,8 +108,8 @@ private:
    mutable boost::condition_variable_any answer_is_available_;
 };
 
-inline void TestActivityReactor::onTaskCompleted(Activity::Task *_task) {
-   ScopedLock lk(mutex_);
+inline void TestActivityReactor::onTaskCompleted(Activity::Task::Ptr _task) {
+   ScopedLock lk(this->mutex());
 
    // io_mutex.lock(); // COMMENT
    // cout << this << " ~ onTaskCompleted (start) ~     " << this_thread::id() << endl;
@@ -107,7 +117,7 @@ inline void TestActivityReactor::onTaskCompleted(Activity::Task *_task) {
    // assert(_task);
    // assert(_task->test_value_ == 32);
 
-   if (task_ == _task) {
+   if (task_.ptr() == _task.ptr()) {
       task_->answerIsAvailable();
    }
 
@@ -125,8 +135,7 @@ struct ActivityManagerFixture {
                               activity_1(manager_->activityNew("a1")),
                               activity_2(manager_->activityNew("a2")),
                               activity_3(manager_->activityNew("a3")),
-                              activity_4(manager_->activityNew("a4"))
-                              {}
+                              activity_4(manager_->activityNew("a4")) {}
    ActivityManager::Ptr manager_;
    
    Activity::Ptr activity_1;

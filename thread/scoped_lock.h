@@ -2,18 +2,24 @@
 
 #include <boost/thread/recursive_mutex.hpp>
 
+#include "../utility.h"
+#include "../exception.h"
 #include "lock.h"
-#include "recursive_mutex.h"
 
 namespace Simone {
 namespace thread {
-
-class ScopedLock : public lock<boost::recursive_mutex::scoped_lock> {
+/* forward declaration */ class RecursiveMutex;
+class ScopedLock : public lock<boost::recursive_mutex::scoped_lock>,
+                   private boost::noncopyable {
 public:
-   explicit ScopedLock(RecursiveMutex& _l) : scoped_lock_(_l.boost_lockable()) {}
-   boost::recursive_mutex::scoped_lock& boost_lock() { return scoped_lock_; }
-private:
-   boost::recursive_mutex::scoped_lock scoped_lock_;
+   explicit ScopedLock(RecursiveMutex& _l);
+   virtual ~ScopedLock();
+   
+   virtual void lock();
+   virtual void unlock();
+protected:
+   RecursiveMutex *const mutex_;
+   bool owns_lock_;
 };
 
 } /* end of namespace thread */

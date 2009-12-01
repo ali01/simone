@@ -9,12 +9,12 @@
 #include <ostream>
 #include <limits>
 #include <string>
-
-namespace Simone {
 using std::stringstream;
 using std::ostream;
 using std::numeric_limits;
 using std::string;
+
+namespace Simone {
 
 template<typename UnitType, typename RepType>
 class Numeric {

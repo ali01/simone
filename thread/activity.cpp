@@ -5,16 +5,12 @@
 
 namespace Simone {
 namespace thread {
-   
-#ifdef __DEBUG__
-boost::recursive_mutex io_debug_mutex_;
-#endif
 
 void Activity::runActivity() {
    runStatusIs(status::kRunning);
    while (true) {
       waitForReactors();
-      Task *n = run_queue_.front();
+      Task::Ptr n = run_queue_.front();
       sleepUntil(n->nextTime());
       n->onRun();
       fireOnTaskCompleted(n);
@@ -27,10 +23,22 @@ void Activity::runActivity() {
 }
 
 void Activity::waitForReactors() const {
-   ScopedLock lk(mutex_);
+   // ScopedLock lk(this->mutex());
    while (run_queue_.empty()) {
-      new_reactors_.wait(lk.boost_lock());
+      this_thread::sleep(milliseconds(10));
+      // new_reactors_.wait(lk);
    }
+   // TODO: write wrapper for ConditionVariable
+}
+
+TimeDelta Activity::timeSinceStart() const {
+   ScopedLock lk(this->mutex());
+   return manager_->timeSinceStart();
+}
+
+Time Activity::currentTime() const {
+   ScopedLock lk(this->mutex());
+   return manager_->currentTime();
 }
 
 void Activity::sleepUntil(const Time& _time) {

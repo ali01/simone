@@ -4,11 +4,10 @@
 #include <functional>
 
 #include <boost/thread/thread.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/condition.hpp>
 
 #include "../time.h"
-#include "../ptr.h"
-#include "../set.h"
-#include "../pqueue.h"
 #include "../notifiee.h"
 #include "../exception.h"
 #include "../utility.h"
@@ -17,21 +16,26 @@
 #include "../utility.h"
 
 #include "this_thread.h"
-#include "recursive_mutex.h"
 #include "scoped_lock.h"
+#include "recursive_mutex.h"
+#include "concurrent_set.h"
+#include "concurrent_pqueue.h"
+#include "concurrent_ptr_interface.h"
+#include "concurrent_collection_element.h"
 
 using std::string;
 using std::binary_function;
 
+   // nextTime
+   // currentTime
+   // timeSinceStart
+
 namespace Simone {
 namespace thread {
 
-#ifdef __DEBUG__
-extern boost::recursive_mutex io_debug_mutex_;
-#endif
-
 /*     forward declaration     */ class ActivityManager;
-class Activity : public PtrInterface<Activity>, private boost::noncopyable {
+class Activity : public ConcurrentPtrInterface<Activity>,
+                 private boost::noncopyable {
    typedef boost::recursive_timed_mutex::scoped_lock timed_lock;
    friend class ActivityThread;
 public:
@@ -40,9 +44,10 @@ public:
    typedef Simone::Ptr<Activity> Ptr;
    
    struct config {
-      enum RunStatus { kRunning, kDone };
+      enum RunStatus      { kRunning, kDone      };
       enum SchedulingMode { kDefault, kAutomatic };
    };
+   
    struct status {
       enum RunStatus { kReady, kStopping, kWaiting, kRunning, kDone };
    };
@@ -68,35 +73,50 @@ public:
       }
    }
    
+   size_t numTasks() const {
+      return run_queue_.size();
+   }
+   
    status::RunStatus runStatus() const {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       return run_status_;
    }
    
    const TimeDelta& autoTimeSpacing() const {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       return auto_time_spacing_;
    }
    
    void autoTimeSpacingIs(const TimeDelta& _td) {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       auto_time_spacing_ = _td;
    }
    
+   Time nextTime() const {
+      ScopedLock lk(this->mutex());
+      return run_queue_.front()->nextTime();
+   }
+   
+   TimeDelta timeSinceStart() const;
+   Time currentTime() const;
+   
    /*=================================================================================
     * Activity task dispatch notifiee ==============================================*/
-   class Task : public BaseNotifiee<Activity,Task,true> {
+   class Task : public BaseNotifiee<Activity,Task>,
+                public ConcurrentCollectionElement {
       friend class Activity;
    protected:
-      Task() : scheduling_mode_(Activity::config::kDefault) { test_value_ = 32; }
+      Task() : scheduling_mode_(Activity::config::kDefault) {
+         stronglyReferencingIs(false);
+      }
       
       Task(Time _next_time): 
                              next_time_(_next_time),
                              scheduling_mode_(Activity::config::kDefault) {
-                                test_value_ = 32;
-                             }
+         stronglyReferencingIs(false);
+      }
                              
-      virtual ~Task() { ScopedLock lk(mutex_); }
+      virtual ~Task() { ScopedLock lk(this->mutex()); }
       
       Time next_time_;
       Activity::config::SchedulingMode scheduling_mode_;
@@ -104,33 +124,31 @@ public:
       typedef Simone::Ptr<const Task> PtrConst;
       typedef Simone::Ptr<Task> Ptr;
       
-      int test_value_;
-      
       const Time& nextTime() const {
-         ScopedLock lk(mutex_);
+         ScopedLock lk(this->mutex());
          return next_time_;
       }
       
       Activity::config::SchedulingMode schedulingMode() const {
-         ScopedLock lk(mutex_);
+         ScopedLock lk(this->mutex());
          return scheduling_mode_;
       }
       
       void schedulingModeIs(Activity::config::SchedulingMode _m) {
-         ScopedLock lk(mutex_);
+         ScopedLock lk(this->mutex());
          scheduling_mode_ = _m;
       }
       
       void notifierIs(const Activity::Ptr& _n) {
-         ScopedLock lk(mutex_);
-         BaseNotifiee<Activity,Task,true>::notifierIs(_n);
+         ScopedLock lk(this->mutex());
+         BaseNotifiee<Activity,Task>::notifierIs(_n);
       }
       // notifications ---------------------------------------------------------------
-      virtual void onRun() {}
+      virtual void onRun() { ABORT(); }
    };
    
-   struct lt_TaskPtr : public binary_function<Task*,Task*,bool> {
-      bool operator()(Task *a, Task *b) const {
+   struct lt_TaskPtr : public binary_function<Task::Ptr,Task::Ptr,bool> {
+      bool operator()(Task::Ptr a, Task::Ptr b) const {
          return (a->nextTime() > b->nextTime());
       }
    };
@@ -138,8 +156,8 @@ public:
    
    /*=================================================================================
     * Activity standard attribute notifiee =========================================*/
-   void notifieeIs(Task *_n) {
-      ScopedLock lk(mutex_);
+   void notifieeIs(Task::Ptr _n) {
+      ScopedLock lk(this->mutex());
       if (_n->schedulingMode() == config::kAutomatic) {
          _n->next_time_ = last_scheduled_time_ + autoTimeSpacing();
       } else if (_n->nextTime() == Time(Time::kNull)) {
@@ -152,42 +170,44 @@ public:
       new_reactors_.notify_all();
    }
    
-   void notifieeDel(Task *_n) const {
-      ScopedLock lk(mutex_);
-      ScopedLock queue_mutex(run_queue_.mutex());
+   void notifieeDel(Task::Ptr _n) const {
+      ScopedLock lk(this->mutex());
+      ScopedLock queue_lock(run_queue_.mutex());
       Activity *me = const_cast<Activity *>(this);
-      PriorityQueue<Task*,lt_TaskPtr,true>::iterator it = me->run_queue_.begin();
+      ConcurrentPriorityQueue<Task::Ptr,lt_TaskPtr>::iterator it =
+                                                               me->run_queue_.begin();
       for(; it != run_queue_.end(); ++it) { if (_n == *it) break; }
       if (it != run_queue_.end()) {
          me->run_queue_.elementDel(it);
       }
    }
    
-   class Notifiee : public BaseNotifiee<Activity,Notifiee,true> {
+   class Notifiee : public BaseNotifiee<Activity,Notifiee>,
+                    public ConcurrentCollectionElement {
    protected:
       Notifiee(Activity::Ptr _a){
          notifierIs(_a);
+         stronglyReferencingIs(false);
       }
       
-      virtual ~Notifiee() { ScopedLock lk(mutex_); }
+      virtual ~Notifiee() { ScopedLock lk(this->mutex()); }
    public:
-      int test_value_;
       typedef Simone::Ptr<const Notifiee> PtrConst;
       typedef Simone::Ptr<Notifiee> Ptr;
       // notifications ---------------------------------------------------------------
-      virtual void onRunStatus() { ABORT(); }
-      virtual void onTaskCompleted(Activity::Task *) { ABORT(); }
+      virtual void onRunStatus()=0;
+      virtual void onTaskCompleted(Activity::Task::Ptr) { ABORT(); } // todo: =0
    };
    
    // notification support -----------------------------------------------------------
-   void notifieeIs(Notifiee *_n) const {
-      ScopedLock lk(mutex_);
+   void notifieeIs(Notifiee::Ptr _n) const {
+      ScopedLock lk(this->mutex());
       Activity *me = const_cast<Activity*>(this);
       me->notifiees_.elementIs(_n);
    }
    
-   void notifieeDel(Notifiee *_n) const {
-      ScopedLock lk(mutex_);
+   void notifieeDel(Notifiee::Ptr _n) const {
+      ScopedLock lk(this->mutex());
       Activity *me = const_cast<Activity*>(this);
       me->notifiees_.elementDel(_n);
    }
@@ -199,7 +219,7 @@ protected:
                                    auto_time_spacing_(0,0,0),
                                    manager_(_m) {}
    virtual ~Activity() {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       runStatusIs(status::kDone);
       threads_.join_all();
    }
@@ -208,16 +228,19 @@ private:
    void runActivity();
    
    void runStatusIs(status::RunStatus _s) {
-      ScopedLock lk(mutex_);
+      ScopedLock lk(this->mutex());
       ScopedLock set_lk(notifiees_.mutex());
       run_status_ = _s;
-      foreach(Notifiee *_n, notifiees_) { _n->onRunStatus(); }
+      foreach(Notifiee::Ptr _n, notifiees_) {
+         _n->onRunStatus();
+      }
    }
    
-   void fireOnTaskCompleted(Task *task) const {
-      ScopedLock lk(mutex_);
-      ScopedLock set_lk(notifiees_.mutex());
-      foreach(Notifiee *n, notifiees_) {
+   void fireOnTaskCompleted(Task::Ptr task) const {
+      ScopedLock task_lock(task->mutex());
+      ScopedLock notifiees_lock(notifiees_.mutex());
+      
+      foreach(Notifiee::Ptr n, notifiees_) {
 
          // assert(n); // COMMENT
          // assert(task);
@@ -257,10 +280,9 @@ private:
    TimeDelta auto_time_spacing_;
    const ActivityManager *const manager_;
    
-   Set<Notifiee*,true> notifiees_;
-   PriorityQueue<Task*,lt_TaskPtr,true> run_queue_;
+   ConcurrentSet<Notifiee::Ptr> notifiees_;
+   ConcurrentPriorityQueue<Task::Ptr,lt_TaskPtr> run_queue_;
    
-   mutable RecursiveMutex mutex_; // coarse granularity sync mutex
    mutable boost::condition_variable_any new_reactors_;
    
    boost::thread_group threads_;

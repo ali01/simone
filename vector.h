@@ -4,7 +4,11 @@
 #include <vector>
 using std::vector;
 
-#include "ptr.h"
+#include "ptr_interface.h"
+
+#include "../globals.h"
+
+#include "../globals.h"
 
 namespace Simone {
 

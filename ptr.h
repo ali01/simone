@@ -29,6 +29,7 @@ public:
    bool operator!=( const Ptr<T>& mp ) const { return ptr_ != mp.ptr_; }
    bool operator==( T* p ) const { return ptr_ == p; }
    bool operator!=( T* p ) const { return ptr_ != p; }
+   bool operator<(const Ptr<T>& mp) const { return ptr_ < mp.ptr_; }
    
    const T& operator*() const { return *ptr_; }
    T& operator*() { return *ptr_; }
@@ -82,5 +83,4 @@ Ptr<T> ptr_cast(Ptr<U> mp) {
 
 }
 
-#include "ptr_interface.h"
 #endif

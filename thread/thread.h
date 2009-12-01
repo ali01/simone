@@ -1,5 +1,6 @@
 #pragma once
 
+#include "this_thread.h"
 #include "activity_manager.h"
 #include "activity_thread.h"
 #include "activity.h"

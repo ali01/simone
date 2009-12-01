@@ -7,7 +7,7 @@ using namespace Simone::thread;
 namespace SimoneTest {
 
 void TestActivityTask::onRun() {
-   ScopedLock lk(mutex_);
+   ScopedLock lk(this->mutex());
    switch (test_mode_) {
       case kA:
          answer_ = 42;
