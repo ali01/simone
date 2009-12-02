@@ -1,3 +1,4 @@
+
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
    Modeling & Simulation's Perspective ~ Chapter 16: Value-Oriented Programming &
    Value Types, Numerical class implementation. */

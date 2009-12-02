@@ -30,12 +30,12 @@ public:
    
    void timeSinceStartIs(TimeDelta& _delta) {
       ScopedLock lk(this->mutex());
-      base_time_ = Time(Clock::kMicrosecUniversal) - _delta;
+      timeDeltaIs((base_time_ + _delta) - Time(Clock::kMicrosecUniversal));
    }
    
    TimeDelta timeSinceStart() const {
       ScopedLock lk(this->mutex());
-      return Time(Clock::kMicrosecUniversal) - base_time_;
+      return (Time(Clock::kMicrosecUniversal) - base_time_) + time_delta_;
    }
    
    Time currentTime() const {
@@ -44,7 +44,7 @@ public:
    
    void currentTimeIs(Time &_time) {
       ScopedLock lk(this->mutex());
-      time_delta_ = _time - Time(Clock::kMicrosecUniversal);
+      timeDeltaIs(_time - Time(Clock::kMicrosecUniversal));
    }
    
    TimeDelta timeDelta() const {

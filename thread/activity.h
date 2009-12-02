@@ -43,7 +43,7 @@ public:
    typedef Simone::Ptr<const Activity> PtrConst;
    typedef Simone::Ptr<Activity> Ptr;
    
-   static const long kSleepTime = 10;
+   static const long kSleepTime = 20;
    
    struct config {
       enum RunStatus      { kRunning, kDone      };
@@ -71,8 +71,7 @@ public:
                throw InvalidOperationException(__FILE__, __LINE__, "activity execution complete");
             }
             break;
-         default: throw AttributeNotSupportedException(__FILE__,
-                                                       __LINE__,
+         default: throw AttributeNotSupportedException(__FILE__, __LINE__,
                                                        "attribute not supported!");
       }
    }
@@ -98,7 +97,16 @@ public:
    
    Time nextTime() const {
       ScopedLock lk(this->mutex());
-      return run_queue_.front()->nextTime();
+      Task::Ptr task = run_queue_.front();
+      if (task) {
+         return task->nextTime();
+      }
+      return last_scheduled_time_;
+   }
+   
+   Time lastScheduledTime() const {
+      ScopedLock lk(this->mutex());
+      return last_scheduled_time_;
    }
    
    TimeDelta timeSinceStart() const;
@@ -110,7 +118,7 @@ public:
                 public ConcurrentCollectionElement {
       friend class Activity;
    protected:
-      Task() : scheduling_mode_(Activity::config::kDefault) {
+      Task() : next_time_(Time::kNull), scheduling_mode_(Activity::config::kDefault) {
          stronglyReferencingIs(false);
       }
       
@@ -124,9 +132,13 @@ public:
       
       Time next_time_;
       Activity::config::SchedulingMode scheduling_mode_;
+      
+      bool complete_;
    public:
       typedef Simone::Ptr<const Task> PtrConst;
       typedef Simone::Ptr<Task> Ptr;
+      
+      enum RunMode { kBlocking, kNonBlocking };
       
       const Time& nextTime() const {
          ScopedLock lk(this->mutex());
@@ -143,12 +155,27 @@ public:
          scheduling_mode_ = _m;
       }
       
-      void notifierIs(const Activity::Ptr& _n) {
-         ScopedLock lk(this->mutex());
-         BaseNotifiee<Activity,Task>::notifierIs(_n);
+      void notifierIs(const Activity::Ptr& _n, RunMode mode=kNonBlocking) {
+         bool complete;
+         {
+            ScopedLock lk(this->mutex());
+            complete = complete_;
+            BaseNotifiee<Activity,Task>::notifierIs(_n);
+         }
+         if (mode == kBlocking) {
+            while ( ! complete) {
+               {
+                  ScopedLock lk(this->mutex());
+                  complete = complete_;
+               }
+               this_thread::sleep(milliseconds(Activity::kSleepTime));
+            }
+         }
       }
       // notifications ---------------------------------------------------------------
       virtual void onRun() { ABORT(); }
+   private:
+      void onComplete() { complete_ = true; }
    };
    
    struct lt_TaskPtr : public binary_function<Task::Ptr,Task::Ptr,bool> {
@@ -156,7 +183,6 @@ public:
          return (a->nextTime() > b->nextTime());
       }
    };
-   
    
    /*=================================================================================
     * Activity standard attribute notifiee =========================================*/
@@ -168,8 +194,20 @@ public:
          _n->next_time_ = Time(Clock::kMicrosecUniversal);
       }
       if (_n->nextTime() > last_scheduled_time_) {
+         TimeDelta offset = _n->nextTime() - last_scheduled_time_;
+         
+         if (offset > seconds(24)) {
+            offset = seconds(24);
+         }
+         #ifdef __DEBUG__
+            // cerr << _n.ptr() << endl;
+            // cerr << (offset < seconds(24)) << endl;
+            assert(offset <= seconds(24)); // DEBUG
+         #endif
+         
          last_scheduled_time_ = _n->nextTime();
       }
+      Time now = Time(Time::kNow); // DEBUG
       run_queue_.push(_n);
       // new_reactors_.notify_all();
    }
@@ -218,7 +256,7 @@ public:
 protected:
    Activity(const ActivityManager *const _m) :
                                    run_status_(status::kReady),
-                                   last_scheduled_time_(Clock::kMicrosecUniversal),
+                                   last_scheduled_time_(Time::kNow),
                                    auto_time_spacing_(0,0,0),
                                    manager_(_m) {}
    virtual ~Activity() {
@@ -243,6 +281,7 @@ private:
       ScopedLock task_lock(task->mutex());
       ScopedLock notifiees_lock(notifiees_.mutex());
       
+      task->onComplete();
       foreach(Notifiee::Ptr n, notifiees_) {
 
          // assert(n); // COMMENT
@@ -268,6 +307,7 @@ private:
          // assert(task);
          // assert(n->test_value_ == 16);
          // assert(task->test_value_ == 32);
+         
       }
    }
    

@@ -19,6 +19,13 @@ TEST_CASE(Time_test_basic_1) {
    CK(time_ == Time());
 }
 
+TEST_CASE(_2) {
+   Time null1(Time::kNull);
+   Time null2(Time::kNull);
+   CK(null1 == null2);
+}
+
+
 SUITE_END();
 
 /*====================================================================================

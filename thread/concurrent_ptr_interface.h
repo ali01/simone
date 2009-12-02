@@ -25,7 +25,8 @@ public:
       mutex_.lock();
       if (ref_ == 0) {
          mutex_.unlock();
-         throw MemoryException(__FILE__, __LINE__, "attempt to delete an object with zero references");
+         throw MemoryException(__FILE__, __LINE__,
+                               "attempt to delete an object with zero references");
       } else if( --ref_ == 0 ) {
          mutex_.unlock();
          this->onZeroReferences();

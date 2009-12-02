@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include "../globals.h"
-   using std::stringstream;
+using std::stringstream;
 using std::string;
 using std::cerr;
 using std::endl;

@@ -25,6 +25,7 @@ void Activity::runActivity() {
 void Activity::waitForReactors() const {
    // ScopedLock lk(this->mutex());
    while (run_queue_.empty()) {
+      assert(this->mutex().lockCount() == 0);
       this_thread::sleep(milliseconds(kSleepTime));
       // new_reactors_.wait(lk);
    }
@@ -42,20 +43,34 @@ Time Activity::currentTime() const {
 }
 
 void Activity::sleepUntil(const Time& _time) {
-   if (_time <= Time(Clock::kMicrosecUniversal)) { return; }
+   if (_time <= currentTime()) { return; }
    runStatusIs(status::kWaiting);
    if (manager_) {
-      timed_lock lk(manager_->timed_mutex_, absoluteTime(_time).ptime());
-      while (timeDelta(_time) > milliseconds(0) && lk.owns_lock()) {
-         manager_->time_delta_changed_.timed_wait(lk, absoluteTime(_time).ptime());
+      // timed_lock lk(manager_->timed_mutex_, absoluteTime(_time).ptime());
+      // while (timeDelta(_time) > milliseconds(0) && lk.owns_lock()) {
+      //    manager_->time_delta_changed_.timed_wait(lk, absoluteTime(_time).ptime());
+      // }
+      while (true) {
+         TimeDelta d = timeDelta(_time);
+         // Time now = Time(Time::kNow); // COMMENT
+         if (d < milliseconds(0)) break;
+         assert(this->mutex().lockCount() == 0);
+         this_thread::sleep(milliseconds(kSleepTime));
       }
-   } else { this_thread::sleep(timeDelta(_time)); }
+   } else {
+      assert(this->mutex().lockCount() == 0);
+      this_thread::sleep(timeDelta(_time));
+   }
    runStatusIs(status::kRunning);
 }
 
 TimeDelta Activity::timeDelta(const Time& _time) const {
-   if (manager_) return _time - manager_->currentTime();
-   else return _time - Time(Time::kNow);
+   if (manager_) {
+      Time current_time = manager_->currentTime();
+      return _time - current_time;
+   } else {
+      return _time - Time(Time::kNow);
+   }
 }
 
 Time Activity::absoluteTime(const Time& _time) const {

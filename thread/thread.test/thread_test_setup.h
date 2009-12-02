@@ -64,6 +64,7 @@ public:
          ready = answer_is_available_bool_;
       }
       while ( ! ready) {
+         assert(this->mutex().lockCount() == 0);
          this_thread::sleep(milliseconds(Activity::kSleepTime));
          {
             ScopedLock lk(this->mutex());
@@ -140,16 +141,16 @@ struct ActivityManagerFixture {
    ActivityManagerFixture() :
                               manager_(ActivityManager::ActivityManagerNew()),
                               activity_1(manager_->activityNew("a1"))
-                              // activity_2(manager_->activityNew("a2")),
-                              // activity_3(manager_->activityNew("a3")),
-                              // activity_4(manager_->activityNew("a4"))
+                              activity_2(manager_->activityNew("a2")),
+                              activity_3(manager_->activityNew("a3")),
+                              activity_4(manager_->activityNew("a4"))
                               {}
    ActivityManager::Ptr manager_;
    
    Activity::Ptr activity_1;
-   // Activity::Ptr activity_2;
-   // Activity::Ptr activity_3;
-   // Activity::Ptr activity_4;
+   Activity::Ptr activity_2;
+   Activity::Ptr activity_3;
+   Activity::Ptr activity_4;
    
    TestActivityTask::Ptr test_task_1;
    TestActivityTask::Ptr test_task_2;
