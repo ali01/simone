@@ -36,7 +36,7 @@ public:
 protected:
    PtrInterface() : ref_(0) {}
    virtual ~PtrInterface() {}
-   void onZeroReferences() const {
+   virtual void onZeroReferences() const {
       delete this;
    }
    

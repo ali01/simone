@@ -186,10 +186,11 @@ git-init: .gitignore
 	git config push.default matching
 	$(MAKE) commit
 ifneq ($(GIT_REMOTE_URL),)
-	git remote add origin $(GIT_REMOTE_URL)
+	-git remote add origin $(GIT_REMOTE_URL)
 	git config remote.origin.url $(GIT_REMOTE_URL)
 	git config branch.master.remote origin
 	git config branch.master.merge refs/heads/master
+	git push origin master
 endif
 
 #git config remote.origin.mirror true

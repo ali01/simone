@@ -140,7 +140,7 @@ inline void TestActivityReactor::onTaskCompleted(Activity::Task::Ptr _task) {
 struct ActivityManagerFixture {
    ActivityManagerFixture() :
                               manager_(ActivityManager::ActivityManagerNew()),
-                              activity_1(manager_->activityNew("a1"))
+                              activity_1(manager_->activityNew("a1")),
                               activity_2(manager_->activityNew("a2")),
                               activity_3(manager_->activityNew("a3")),
                               activity_4(manager_->activityNew("a4"))
