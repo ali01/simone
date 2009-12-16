@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
    Modeling & Simulation's Perspective ~ Chapter 5: Memory management with smart
    pointers. */
@@ -7,7 +9,7 @@
 #include "recursive_mutex.h"
 #include "scoped_lock.h"
 
-#include "../ptr.h"
+#include "../ptr_interface.h"
 
 namespace Simone {
 namespace thread {
@@ -39,6 +41,11 @@ public:
    
    virtual RecursiveMutex& mutex() const {
       return mutex_;
+   }
+   
+   template <typename Collection> // enable use with Simone::ConcurrentCollection
+   void collectionIs(Collection *_c) const {
+      mutex().parentMutexIs(_c->mutex());
    }
 protected:
    ConcurrentPtrInterface() {}

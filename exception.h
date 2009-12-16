@@ -1,3 +1,4 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
    Modeling & Simulation's Perspective ~ Chapter 7: Exceptions & Exception Handling */
 
@@ -5,7 +6,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include "../globals.h"
+#include <stdint.h>
 using std::stringstream;
 using std::string;
 using std::cerr;

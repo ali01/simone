@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 
 #include <string>
@@ -114,8 +116,7 @@ public:
    
    /*=================================================================================
     * Activity task dispatch notifiee ==============================================*/
-   class Task : public BaseNotifiee<Activity,Task>,
-                public ConcurrentCollectionElement {
+   class Task : public BaseNotifiee<Activity,Task> {
       friend class Activity;
    protected:
       Task() : next_time_(Time::kNull), scheduling_mode_(Activity::config::kDefault) {
@@ -224,8 +225,7 @@ public:
       }
    }
    
-   class Notifiee : public BaseNotifiee<Activity,Notifiee>,
-                    public ConcurrentCollectionElement {
+   class Notifiee : public BaseNotifiee<Activity,Notifiee> {
    protected:
       Notifiee(Activity::Ptr _a){
          stronglyReferencingIs(false);

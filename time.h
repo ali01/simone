@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 
 #include <boost/operators.hpp>
@@ -12,8 +14,8 @@ struct Clock {
    enum Type { kSecondLocal, kSecondUniversal, kMicrosecLocal, kMicrosecUniversal };
 };
 
-class Time : private boost::less_than_comparable<Time,
-                            boost::equality_comparable<Time> > {
+class Time
+   : private boost::less_than_comparable<Time,boost::equality_comparable<Time> > {
 public:
    enum SpecialValue { kNow, kInfinity, kNegInfinity, kMax, kMin, kNull };
    

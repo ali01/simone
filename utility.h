@@ -1,9 +1,12 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 
 #include <cstdlib>
 #include <cassert>
 #include <iomanip>
 #include <cstring>
+#include <utility>
 
 #include <boost/utility.hpp>
 #include <boost/foreach.hpp>
@@ -24,7 +27,7 @@
 #ifdef __DEBUG__ 
    #define IF_DEBUG(stmt)       stmt
    #define ABORT()              assert(false); abort()
-   #define DEBUG_IF(condition, stmt, fl, ln)                               \
+   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)                               \
             if (condition) {                                               \
                printf("\nDebug segment @ %s:%d\n", fl, ln);                \
                printf("----------------------------------------------\n"); \
@@ -51,7 +54,7 @@
 #else   
    #define IF_DEBUG(stmt)
    #define ABORT()
-   #define DEBUG_IF(condition, stmt, fl, ln)
+   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)
    #define NDEBUG
 #endif
 

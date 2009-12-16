@@ -1,6 +1,10 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 #include <map>
+#include <functional>
 using std::map;
+using std::less;
 
 #include "scoped_lock.h"
 
@@ -10,25 +14,31 @@ using std::map;
 namespace Simone {
 namespace thread {
 
-template <typename KeyType, typename ValueType>
+template <typename KeyType,
+          typename ValueType,
+          typename Compare=less<KeyType> >
 class ConcurrentMap : public ConcurrentCollection {
 public:
    // type declarations ==============================================================
-   typedef Simone::Ptr<const ConcurrentMap<KeyType,ValueType> > PtrConst;
-   typedef Simone::Ptr<ConcurrentMap<KeyType,ValueType> > Ptr;
+   typedef Simone::Ptr<const ConcurrentMap<KeyType,ValueType,Compare> > PtrConst;
+   typedef Simone::Ptr<ConcurrentMap<KeyType,ValueType,Compare> > Ptr;
    
-   typedef typename map<KeyType,ValueType>::iterator iterator;
-   typedef typename map<KeyType,ValueType>::reverse_iterator 
-                                                          reverse_iterator;
-   typedef typename map<KeyType,ValueType>::const_iterator
-                                                          const_iterator;
-   typedef typename map<KeyType,ValueType>::const_reverse_iterator
-                                                          const_reverse_iterator;
+   typedef typename map<KeyType,ValueType,Compare>::iterator
+                                                    iterator;
+   typedef typename map<KeyType,ValueType,Compare>::reverse_iterator 
+                                                    reverse_iterator;
+   typedef typename map<KeyType,ValueType,Compare>::const_iterator
+                                                    const_iterator;
+   typedef typename map<KeyType,ValueType,Compare>::const_reverse_iterator
+                                                    const_reverse_iterator;
    
    // factory constructor ============================================================
    static Ptr ConcurrentMapNew() { return new ConcurrentMap(); }
    ConcurrentMap() {}
-   virtual ~ConcurrentMap() { ScopedLock lk(this->mutex()); }
+   
+   virtual ~ConcurrentMap() {
+      ScopedLock lk(this->mutex());
+   }
    
    // iterators ======================================================================
    iterator begin() {
@@ -93,7 +103,7 @@ public:
    
    // mutators =======================================================================
    void elementIs(const KeyType& _key, const ValueType& _v) {
-      _v->collectionIs(this);
+      _v.collectionIs(this);
       map_[_key] = _v;
    }
    
@@ -117,7 +127,7 @@ public:
 private:
    // member functions ===============================================================
    // data members ===================================================================
-   map<KeyType,ValueType> map_;
+   map<KeyType,ValueType,Compare> map_;
 };
 
 } /* end of namespace thread */

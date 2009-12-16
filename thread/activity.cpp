@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #include "activity.h"
 #include "activity_thread.h"
 #include "activity_manager.h"

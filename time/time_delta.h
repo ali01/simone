@@ -1,4 +1,9 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
+
+#include <ostream>
+using std::ostream;
 
 #include <boost/operators.hpp>
 #include <boost/date_time/time_duration.hpp>
@@ -13,7 +18,7 @@ class TimeDelta : private boost::less_than_comparable<TimeDelta,
                                boost::equality_comparable<TimeDelta> > {
    friend class Time;
 public:   
-   TimeDelta(double sec_dbl){
+   TimeDelta(double sec_dbl=0){
       long sec   = static_cast<long>(floor(sec_dbl));
       int res    = boost::posix_time::time_duration::num_fractional_digits();
       long fract = static_cast<long>(floor((sec_dbl - sec) * pow(10.0, res)));
@@ -91,6 +96,10 @@ public:
    }
    
    boost::posix_time::time_duration boost_time_duration() const { return delta_; }
+   
+   friend ostream& operator<<(ostream& out, const TimeDelta& _delta) {
+      return out << _delta.totalSecondsDbl();
+   }
 protected:
    TimeDelta(boost::posix_time::time_duration rhs) : delta_(rhs.hours(),
                                                      rhs.minutes(),

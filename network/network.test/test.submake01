@@ -1,0 +1,10 @@
+DIR_TCXS8WWH := network/network.test
+SUB_TCXS8WWH := 
+
+SRCS += $(wildcard $(DIR_TCXS8WWH)/*.$(EXT))
+
+MK_TCXS8WWH := $(foreach sdir,$(SUB_TCXS8WWH),$(wildcard $(DIR_TCXS8WWH)/$(sdir)/*.(SUBDIR_EXT)))
+ifneq ($(MK_TCXS8WWH),)
+$(info -- including subdirectory makefiles ($(DIR_TCXS8WWH)): $(MK_TCXS8WWH)) 
+include $(MK_TCXS8WWH)
+endif

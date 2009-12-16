@@ -11,8 +11,18 @@ template <typename T>
 class Ptr
 {
 public:
-   Ptr(T* p = 0) : ptr_(p) { if (ptr_) ptr_->newRef(); }
-   Ptr(const Ptr<T>& mp) : ptr_(mp.ptr_) { if (ptr_) ptr_->newRef(); }
+   Ptr(T* p = 0) : ptr_(p) {
+      if (ptr_) {
+         ptr_->newRef();
+      }
+   }
+   
+   Ptr(const Ptr<T>& mp) : ptr_(mp.ptr_) {
+      if (ptr_){
+         ptr_->newRef();
+      }
+   }
+   
    ~Ptr() {
       if (ptr_) {
          if (ptr_->deleteRef() == 0) {
@@ -44,6 +54,11 @@ public:
    struct PointerConversion { int valid; };
    operator int PointerConversion::*() const {
       return ptr_ ? &PointerConversion::valid : 0;
+   }
+   
+   template <typename Collection> // enable use with Simone::ConcurrentCollection
+   void collectionIs(Collection *_c) const {
+      ptr_->collectionIs(_c);
    }
 protected:
    T *ptr_;

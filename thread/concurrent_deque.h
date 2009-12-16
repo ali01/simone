@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 
 #include <deque>
@@ -122,7 +124,7 @@ public:
    }
 
    void elementIs(uint32_t _i, const T& _e) {
-      _e->collectionIs(this);
+      _e.collectionIs(this);
       deque_[_i] = _e; 
    }
 

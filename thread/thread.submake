@@ -1,4 +1,10 @@
+ifeq ($(OSTYPE),Darwin)
 LIBS += $(VOL_LIBRARY_PATH)/libboost_thread.a
+endif
+
+ifeq ($(OSTYPE),Linux)
+LIBS += /usr/lib/libboost_thread-mt.so
+endif
 
 DIR_PRNZS0KG := simone/thread
 SUB_PRNZS0KG :=

@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #ifndef VECTOR_H_563FAR15
 #define VECTOR_H_563FAR15
 
@@ -5,15 +7,13 @@
 using std::vector;
 
 #include "ptr_interface.h"
-
-#include "../globals.h"
-
-#include "../globals.h"
+#include "utility.h"
 
 namespace Simone {
 
 template <typename T>
-class Vector : public PtrInterface<Vector<T> > {
+class Vector : public PtrInterface<Vector<T> >,
+               boost::noncopyable {
 public:
    // type declarations ==============================================================
    typedef Simone::Ptr<const Vector<T> > PtrConst;
@@ -63,9 +63,6 @@ private:
    // member functions ===============================================================
    // data members ===================================================================
    vector<T> vector_;
-   // disallowed operations ==========================================================
-   Vector(const Vector&);
-   void operator=(const Vector&);
 };
 
 } /* end of namespace Simone */

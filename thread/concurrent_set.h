@@ -1,3 +1,5 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
+
 #pragma once
 
 #include <set>
@@ -107,11 +109,15 @@ public:
       ScopedLock lk(this->mutex());
       return set_.count(_v); 
    }
+   
+   void clear() {
+      set_.clear();
+   }
 
    
    // mutators =======================================================================
    void elementIs(const T& _v) {
-      _v->collectionIs(this);
+      _v.collectionIs(this);
       ScopedLock lk(this->mutex());
       set_.insert(_v); 
    }

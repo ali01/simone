@@ -1,5 +1,5 @@
 DIR_5YE1FAYJ := network
-SUB_5YE1FAYJ := 
+SUB_5YE1FAYJ := network.test
 
 SRCS += $(wildcard $(DIR_5YE1FAYJ)/*.$(EXT))
 

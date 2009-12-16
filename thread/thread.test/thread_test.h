@@ -33,11 +33,13 @@ TEST_CASE(_2) { // sequential tasks
    CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
 }
 
+#define kDebugTest3 false
 TEST_CASE(_3) { // sequential tasks 2
-   #ifdef __DEBUG__
+   #if kDebugTest3
    static int count = 0   ;
    for (int i = 0; i < 1000; ++i) {
    #endif
+   
    
       test_task_1 = TestActivityTask::TestActivityTaskNew(activity_1,
                                                           TestActivityTask::kA);
@@ -55,7 +57,7 @@ TEST_CASE(_3) { // sequential tasks 2
                                                           TestActivityTask::kD);
       CK_EQUAL(test_task_4->meaningOfLifeUniverseAndEverything(), 29218);
    
-   #ifdef __DEBUG__
+   #if kDebugTest3
       cout << ++count << endl;
    }
    #endif

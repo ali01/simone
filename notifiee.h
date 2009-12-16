@@ -1,3 +1,4 @@
+/* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
    Modeling & Simulation's Perspective ~ Chapter 3: Events, Notifications, and
    Callbacks. */
@@ -7,11 +8,15 @@
 #include "utility.h"
 #include "exception.h"
 
+#include "thread/concurrent_ptr_interface.h"
+
 namespace Simone {
 
 template <typename Notifier,
           typename ChildNotifiee=class Notifier::Notifiee>
-class BaseNotifiee : private boost::noncopyable {
+class BaseNotifiee
+   :   public thread::ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
+       private boost::noncopyable {
 protected:
    BaseNotifiee() : strongly_ref_(true) {}
    virtual ~BaseNotifiee() {
