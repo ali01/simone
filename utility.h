@@ -27,7 +27,7 @@
 #ifdef __DEBUG__ 
    #define IF_DEBUG(stmt)       stmt
    #define ABORT()              assert(false); abort()
-   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)                               \
+   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)                      \
             if (condition) {                                               \
                printf("\nDebug segment @ %s:%d\n", fl, ln);                \
                printf("----------------------------------------------\n"); \
@@ -55,7 +55,7 @@
    #define IF_DEBUG(stmt)
    #define ABORT()
    #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)
-   #define NDEBUG
+   // #define NDEBUG
 #endif
 
 namespace Simone {} /* end of namespace Simone */

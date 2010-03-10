@@ -26,7 +26,8 @@ public:
    virtual const PtrInterface * deleteRef() const {
       if (ref_ == 0) {
          throw MemoryException(__FILE__, __LINE__,
-                               "attempt to delete an object with zero references");
+                               "attempt to delete an object "
+                               "with zero references");
       }
       if( --ref_ == 0 ) {
          onZeroReferences();
@@ -35,7 +36,8 @@ public:
       return this;
    }
    
-   template <typename Collection> // enable use with Simone::ConcurrentCollection
+   /* allow use with Simone::ConcurrentCollection */
+   template <typename Collection>
    void collectionIs(Collection *_c) const {}
 protected:
    PtrInterface() : ref_(0) {}
