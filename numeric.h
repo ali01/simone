@@ -111,7 +111,9 @@ public:
 protected:
    // # member functions =============================================================
    virtual void valueIs(RepType v) { value_ = v; }
-   virtual bool equal(RepType v) const { return value_ == v; }
+   virtual bool equal(RepType v) const {
+      return value_ == v;
+   }
    // # data members =================================================================
    RepType value_;
 };
@@ -235,14 +237,15 @@ Numeric<UnitType,RepType>::operator%=(const Numeric<UnitType,RepType>& v) {
 
 template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const {
-   return equal(v.value_);
+Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const
+{
+   return equal(v.value());
 }
 
 template<typename UnitType, typename RepType>
 inline bool
 Numeric<UnitType,RepType>::operator!=(const Numeric<UnitType,RepType>& v) const {
-   return !equal(v.value_);
+   return !equal(v.value());
 }
 
 template<typename UnitType, typename RepType>
