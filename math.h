@@ -8,7 +8,7 @@
 namespace Simone {
 namespace math {
 
-const double kEpsilon = 0.00001;
+extern const double kEpsilon;
 
 inline bool equal(double lhs, double rhs) {
    return fabs(lhs - rhs) < kEpsilon;
