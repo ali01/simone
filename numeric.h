@@ -1,5 +1,5 @@
 /* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
-/* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a 
+/* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a
    Modeling & Simulation's Perspective ~ Chapter 16: Value-Oriented Programming &
    Value Types, Numerical class implementation. */
 
@@ -25,11 +25,11 @@ public:
    Numeric(RepType v) { valueIs(v); }
    Numeric(const Numeric<UnitType,RepType>& v) { valueIs(v.value_); }
    virtual ~Numeric() {}
-   
+
    // # assignment operator ----------------------------------------------------------
    const Numeric<UnitType,RepType>&
             operator= (const Numeric<UnitType,RepType>& v);
-   
+
    // # member functions =============================================================
    RepType value() const { return value_; }
    // # arithmetic operators =========================================================
@@ -37,42 +37,42 @@ public:
    RepType operator+ (const Numeric<UnitType,RepType>& v) const {
       return value_ + v.value_;
    }
-   
+
    const Numeric<UnitType,RepType>&
             operator++();
    // const Numeric<UnitType,RepType>&
    //          operator++(int);
    const Numeric<UnitType,RepType>&
             operator+=(const Numeric<UnitType,RepType>& v);
-   
+
    // # subtraction
    // friend const Numeric<UnitType,RepType> // unary minus
    //          operator-(const Numeric<UnitType,RepType>& v);
    const RepType operator- (const Numeric<UnitType,RepType>& v) const;
-   
+
    const Numeric<UnitType,RepType>&
             operator--();
    // const Numeric<UnitType,RepType>&
    //          operator--(int);
    const Numeric<UnitType,RepType>&
             operator-=(const Numeric<UnitType,RepType>& v);
-   
+
    // # multiplication
    const RepType operator* (const Numeric<UnitType,RepType>& v) const;
    const Numeric<UnitType,RepType>&
             operator*=(const Numeric<UnitType,RepType>& v);
-   
+
    // # division
    const RepType operator/ (const Numeric<UnitType,RepType>& v) const;
-   
+
    const Numeric<UnitType,RepType>&
             operator/=(const Numeric<UnitType,RepType>& v);
-   
+
    // # modulus
    const RepType operator% (const Numeric<UnitType,RepType>& v) const;
    const Numeric<UnitType,RepType>&
             operator%=(const Numeric<UnitType,RepType>& v);
-   
+
    // # relational operators =========================================================
    bool     operator==(const Numeric<UnitType,RepType>& v) const;
    bool     operator!=(const Numeric<UnitType,RepType>& v) const;
@@ -80,29 +80,29 @@ public:
    bool     operator<=(const Numeric<UnitType,RepType>& v) const;
    bool     operator< (const Numeric<UnitType,RepType>& v) const;
    bool     operator> (const Numeric<UnitType,RepType>& v) const;
-   
-   static RepType maxValue() { 
+
+   static RepType maxValue() {
       #ifdef WIN32
       #undef max
-         return numeric_limits<RepType>::max(); 
+         return numeric_limits<RepType>::max();
       #else
-         return numeric_limits<RepType>::max(); 
+         return numeric_limits<RepType>::max();
       #endif
    }
-   
-   static RepType minValue() {      
-      #ifdef WIN32 
+
+   static RepType minValue() {
+      #ifdef WIN32
       #undef min
-         return numeric_limits<RepType>::min(); 
+         return numeric_limits<RepType>::min();
       #else
-         return numeric_limits<RepType>::min(); 
+         return numeric_limits<RepType>::min();
       #endif
    }
-   
+
    friend ostream& operator<<(ostream& out, const Numeric<UnitType,RepType>& _n) {
       return out << _n.value_;
    }
-   
+
    virtual const string str() const {
       stringstream ss;
       ss << *this;
@@ -111,6 +111,7 @@ public:
 protected:
    // # member functions =============================================================
    virtual void valueIs(RepType v) { value_ = v; }
+   virtual bool equal(RepType v) { return value_ == v; }
    // # data members =================================================================
    RepType value_;
 };
@@ -118,7 +119,7 @@ protected:
 // # copy constructor -------------------------------------------------------------
 template<typename UnitType, typename RepType>
 inline const
-Numeric<UnitType,RepType>& 
+Numeric<UnitType,RepType>&
 Numeric<UnitType,RepType>::operator=(const Numeric<UnitType,RepType>& v) {
    if (this != &v) { valueIs(v.value_); }
    return v;
@@ -235,13 +236,13 @@ Numeric<UnitType,RepType>::operator%=(const Numeric<UnitType,RepType>& v) {
 template<typename UnitType, typename RepType>
 inline bool
 Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const {
-   return value_ == v.value_;
+   return equal(v.value_);
 }
 
 template<typename UnitType, typename RepType>
 inline bool
 Numeric<UnitType,RepType>::operator!=(const Numeric<UnitType,RepType>& v) const {
-   return value_ != v.value_;
+   return !equal(v.value_);
 }
 
 template<typename UnitType, typename RepType>
@@ -263,7 +264,7 @@ Numeric<UnitType,RepType>::operator<(const Numeric<UnitType,RepType>& v) const {
 }
 
 template<typename UnitType, typename RepType>
-inline bool 
+inline bool
 Numeric<UnitType,RepType>::operator>(const Numeric<UnitType,RepType>& v) const {
    return value_ > v.value_;
 }
