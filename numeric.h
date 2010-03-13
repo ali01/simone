@@ -111,7 +111,7 @@ public:
 protected:
    // # member functions =============================================================
    virtual void valueIs(RepType v) { value_ = v; }
-   virtual bool equal(RepType v) { return value_ == v; }
+   virtual bool equal(RepType v) const { return value_ == v; }
    // # data members =================================================================
    RepType value_;
 };
