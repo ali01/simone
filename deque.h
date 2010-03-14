@@ -71,7 +71,6 @@ public:
    const T& operator[](const uint32_t& _i) const { return deque_[_i]; }
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */
 
 #endif
