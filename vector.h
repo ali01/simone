@@ -26,6 +26,7 @@ public:
    // factory constructor ======================================================
    static Ptr VectorNew() { return new Vector(); }
    Vector() {}
+   virtual ~Vector() {}
 
    // iterators ================================================================
    iterator               begin()  { return vector_.begin();  }
