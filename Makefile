@@ -8,6 +8,8 @@ LIBS        ?=
 
 TESTER      := rtests
 
+TRASH       ?=
+
 # =============================================================================
 # =====================      Source Control Variables      ====================
 # =============================================================================
@@ -39,13 +41,14 @@ ARCH   := -D_LINUX_
 ENDIAN := -D_LITTLE_ENDIAN_
 endif
 
+ifeq ($(OSTYPE),Darwin)
+ARCH   := -D_DARWIN_
+ENDIAN := -D_LITTLE_ENDIAN_
+endif
+
 ifeq ($(OSTYPE),SunOS)
 ARCH   := -D_SOLARIS_
 ENDIAN := -D_BIG_ENDIAN_
-endif
-
-ifeq ($(OSTYPE),Darwin)
-ARCH := -D_DARWIN_
 endif
 
 # =============================================================================
@@ -56,15 +59,14 @@ LDFLAGS ?=
 .IGNORE ?=
 
 ifneq ($(DEBUG),)
-CXXFLAGS := -Wall -g $(ARCH) $(DEBUG)
-else 
+CXXFLAGS := -g -Wall $(ARCH) $(DEBUG)
+else
 CXXFLAGS := -O2
 endif
+# -gfull
 
 CXX := g++
 EXT := cpp
-
-# -gfull
 
 # =============================================================================
 # ===================      Project Specific Build Setup      ==================
@@ -88,9 +90,11 @@ endif
 # ======================      Source & Header Setup      ======================
 # =============================================================================
 
-SRCS += $(wildcard *.$(EXT))         
+SRCS += $(wildcard *.$(EXT))
 OBJS += $(patsubst %.$(EXT),%.o,$(SRCS))
 DEPS := $(patsubst %.$(EXT),%.d,$(SRCS))
+
+EXTERNAL_OBJS ?=
 
 TEST_SRCS ?=
 TEST_OBJS += $(patsubst %.$(EXT),%.o,$(TEST_SRCS))
@@ -105,12 +109,13 @@ all: $(PROJECT)
 
 test: $(TESTER)
 
+$(OBJS): $(EXTERNAL_OBJS)
 $(OBJS): %.o: %.$(EXT)
 	@$(CXX) $(CPPFLAGS) -MM -MP -MF $(basename $<).d -MT $(basename $<).o $<
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 $(PROJECT): $(OBJS) | .gitignore
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(PROJECT) $(OBJS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(PROJECT) $(OBJS) $(EXTERNAL_OBJS) $(LIBS)
 
 
 $(TEST_OBJS): %.o: %.$(EXT)
@@ -118,9 +123,9 @@ $(TEST_OBJS): %.o: %.$(EXT)
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 $(TESTER): $(OBJS) $(TEST_OBJS) | .gitignore
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(TESTER) $(OBJS) $(TEST_OBJS) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(TESTER) $(OBJS) $(EXTERNAL_OBJS) $(TEST_OBJS) $(LIBS)
 
-nolink: $(OBJS) | .gitignore
+nolink: $(OBJS) $(EXTERNAL_OBJS) | .gitignore
 
 # =============================================================================
 # =========================      Dependency Setup      ========================
@@ -232,7 +237,9 @@ endif
 
 clean:
 	rm -f $(OBJS)
+	rm -f $(EXTERNAL_OBJS)
 	rm -f $(TEST_OBJS)
+	rm -f $(TRASH)
 	rm -f $(PROJECT).tar.gz
 	rm -f $(PROJECT)
 	rm -f $(TESTER)
@@ -247,7 +254,6 @@ clean-deps:
 	rm -f .*.d.*
 
 clean-all: clean clean-deps
-	rm -f .gitignore
 
 # =============================================================================
 # =============================      Release      =============================
