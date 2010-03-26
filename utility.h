@@ -24,16 +24,10 @@
 #include "portability/vs-stdint.h"
 #endif
 
-#ifdef __DEBUG__ 
+#define ABORT() assert(false);
+
+#ifdef __DEBUG__
    #define IF_DEBUG(stmt)       stmt
-   #define ABORT()              assert(false); abort()
-   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)                      \
-            if (condition) {                                               \
-               printf("\nDebug segment @ %s:%d\n", fl, ln);                \
-               printf("----------------------------------------------\n"); \
-               stmt;                                                       \
-               printf("\n\n");                                             \
-            }
    #include <iostream>
    #include <sstream>
    #include <fstream>
@@ -48,13 +42,11 @@
    using std::stringstream;
    using std::ostringstream;
    using std::istringstream;
-   
+
    #include <boost/thread/recursive_mutex.hpp>
    extern boost::recursive_mutex io_debug_mutex_;
-#else   
+#else
    #define IF_DEBUG(stmt)
-   #define ABORT()
-   #define CONDITIONAL_DEBUG(condition, stmt, fl, ln)
    // #define NDEBUG
 #endif
 
