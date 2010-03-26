@@ -4,19 +4,15 @@
 
 #include <cstdlib>
 #include <cassert>
-#include <iomanip>
 #include <cstring>
 #include <utility>
+#include <iomanip>
 
 #include <boost/utility.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-#ifdef linux
-#include <stdint.h>
-#endif
-
-#ifdef __APPLE__
+#ifdef linux || __APPLE__
 #include <stdint.h>
 #endif
 
@@ -47,7 +43,6 @@
    extern boost::recursive_mutex io_debug_mutex_;
 #else
    #define IF_DEBUG(stmt)
-   // #define NDEBUG
 #endif
 
 namespace Simone {} /* end of namespace Simone */
