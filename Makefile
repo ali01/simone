@@ -243,15 +243,15 @@ clean:
 	rm -f $(PROJECT).tar.gz
 	rm -f $(PROJECT)
 	rm -f $(TESTER)
-	rm -f *.o *~ ._* .DS_Store
+	rm -f **/*.o **/*~ **/._* .DS_Store
 
 clean-deps:
 	rm -f $(DEPS)
 	rm -f $(TEST_DEPS)
-	rm -f *.d
-	rm -f *.d.*
-	rm -f .*.d
-	rm -f .*.d.*
+	rm -f **/*.d
+	rm -f **/*.d.*
+	rm -f **/.*.d
+	rm -f **/.*.d.*
 
 clean-all: clean clean-deps
 
