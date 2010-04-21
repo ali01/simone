@@ -8,8 +8,7 @@
 namespace Simone {
 
 template <typename T>
-class Ptr
-{
+class Ptr {
 public:
    Ptr(T* p = 0) : ptr_(p) {
       if (ptr_) {

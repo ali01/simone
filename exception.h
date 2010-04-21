@@ -1,6 +1,7 @@
 /* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a
-   Modeling & Simulation's Perspective ~ Chapter 7: Exceptions & Exception Handling */
+   Modeling & Simulation's Perspective ~ Chapter 7: Exceptions & Exception 
+   Handling */
 
 #pragma once
 #include <string>

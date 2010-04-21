@@ -10,7 +10,10 @@
 
 namespace Simone {
 namespace thread {
-/* forward declaration */ class RecursiveMutex;
+
+/* forward declarations */
+class RecursiveMutex;
+
 class ScopedLock : public lock<boost::recursive_mutex::scoped_lock>,
                    private boost::noncopyable {
 public:

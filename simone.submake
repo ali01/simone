@@ -1,7 +1,7 @@
 DIR_73K3LKB5 := simone
-# SUB_73K3LKB5 += thread
-# SUB_73K3LKB5 += network
-# SUB_73K3LKB5 += time
+SUB_73K3LKB5 += thread
+SUB_73K3LKB5 += network
+SUB_73K3LKB5 += time
 
 SRCS += $(wildcard $(DIR_73K3LKB5)/*.$(EXT))
 

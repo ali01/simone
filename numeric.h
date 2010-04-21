@@ -237,8 +237,7 @@ Numeric<UnitType,RepType>::operator%=(const Numeric<UnitType,RepType>& v) {
 
 template<typename UnitType, typename RepType>
 inline bool
-Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const
-{
+Numeric<UnitType,RepType>::operator==(const Numeric<UnitType,RepType>& v) const {
    return equal(v.value());
 }
 
