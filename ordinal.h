@@ -1,7 +1,7 @@
 /* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
 /* Adapted from David R. Cheriton's Advanced Object Oriented Programming from a
-  Modeling & Simulation's Perspective ~ Chapter 16: Value-Oriented Programming &
-  Value Types, Numerical class implementation. */
+   Modeling & Simulation's Perspective ~ Chapter 16: Value-Oriented
+   Programming & Value Types, Numerical class implementation. */
 
 #ifndef ORDINAL_H_G09I1KEU
 #define ORDINAL_H_G09I1KEU
@@ -43,19 +43,15 @@ public:
   static RepType maxValue() {
     #ifdef WIN32
     #undef max
-      return numeric_limits<RepType>::max();
-    #else
-      return numeric_limits<RepType>::max();
     #endif
+    return numeric_limits<RepType>::max();
   }
 
   static RepType minValue() {
     #ifdef WIN32
     #undef min
-      return numeric_limits<RepType>::min();
-    #else
-      return numeric_limits<RepType>::min();
     #endif
+    return numeric_limits<RepType>::min();
   }
   
   /* assignment */
@@ -96,7 +92,6 @@ Ordinal<UnitType,RepType>::operator=(const Ordinal<UnitType,RepType>& v) {
   if (this != &v) { valueIs(v.value_); }
   return v;
 }
-
 
 /* relational operators */
 
