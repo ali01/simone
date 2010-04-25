@@ -55,7 +55,6 @@ public:
   }
   
   /* assignment */
-  
   const Ordinal<UnitType,RepType>&
     operator=(const Ordinal<UnitType,RepType>& v);
 
@@ -69,9 +68,8 @@ public:
   bool operator> (const Ordinal<UnitType,RepType>& v) const;
 
   /* stream operator */
-
-  friend
-  ostream& operator<<(ostream& out, const Ordinal<UnitType,RepType>& _n) {
+  friend ostream&
+  operator<<(ostream& out, const Ordinal<UnitType,RepType>& _n) {
     return out << _n.value_;
   }
 protected:
