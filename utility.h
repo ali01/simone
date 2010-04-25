@@ -1,6 +1,7 @@
 /* Copyright (c) 2008-2010. Ali H. Yahya, All rights reserved. */
 
-#pragma once
+#ifndef UTILITY_H_209U9Q7M
+#define UTILITY_H_209U9Q7M
 
 #include <cstdlib>
 #include <cassert>
@@ -12,7 +13,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-#ifdef linux || __APPLE__
+#if defined(linux) || defined(__APPLE__)
 #include <stdint.h>
 #endif
 
@@ -46,3 +47,5 @@
 #endif
 
 namespace Simone {} /* end of namespace Simone */
+
+#endif
