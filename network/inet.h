@@ -86,7 +86,7 @@ public:
       return value_ & subnetMask().value();
    }
    
-   string str() const {
+   const string str() const {
       stringstream ss;
       ss << *this;
       return ss.str();
