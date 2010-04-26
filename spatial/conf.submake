@@ -1,0 +1,10 @@
+DIR_Q7ESZ37Y := simone/spatial
+SUB_Q7ESZ37Y := 
+
+SRCS += $(wildcard $(DIR_Q7ESZ37Y)/*.$(EXT))
+
+MK_Q7ESZ37Y := $(foreach sdir,$(SUB_Q7ESZ37Y),$(wildcard $(DIR_Q7ESZ37Y)/$(sdir)/*.$(SUBDIR_EXT)))
+ifneq ($(MK_Q7ESZ37Y),)
+$(info -- including subdirectory makefiles ($(DIR_Q7ESZ37Y)): $(MK_Q7ESZ37Y)) 
+include $(MK_Q7ESZ37Y)
+endif
