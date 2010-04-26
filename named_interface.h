@@ -16,7 +16,7 @@ namespace Simone {
 
 class NamedInterface : public PtrInterface<NamedInterface> {
 public:
-  const string& name() const {return name_; }
+  const string& name() const { return name_; }
 
 protected:
   NamedInterface(const string& name) {}
