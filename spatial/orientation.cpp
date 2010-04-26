@@ -12,6 +12,14 @@ const Orientation Orientation::kSouth(SOUTH);
 const Orientation Orientation::kEast(EAST);
 const Orientation Orientation::kWest(WEST);
 
+Orientation::Orientation() : Simone::Nominal<Orientation,short>(NORTH) {}
+
+Orientation::Orientation(const Orientation& _o) : 
+  Simone::Nominal<Orientation,short>(_o.value()) {}
+
+Orientation::Orientation(short _d) :
+  Simone::Nominal<Orientation,short>(_d) {}
+
 void
 Orientation::valueIs(short v) {
   if (v < NORTH || v > WEST) {

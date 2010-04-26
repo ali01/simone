@@ -14,6 +14,9 @@ public:
   static const Orientation kEast;
   static const Orientation kWest;
   
+  /* default constructor */
+  Orientation();
+  
   /* copy constructor */
   Orientation(const Orientation& _o);
   
@@ -23,14 +26,6 @@ private:
   /* member functions */
   void valueIs(short v);
 };
-
-inline
-Orientation::Orientation(const Orientation& _o) : 
-  Simone::Nominal<Orientation,short>(_o.value()) {}
-
-inline
-Orientation::Orientation(short _d) :
-  Simone::Nominal<Orientation,short>(_d) {}
 
 } /* end of namespace Simone */
 
