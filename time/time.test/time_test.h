@@ -43,7 +43,8 @@ TEST_CASE(TimeDelta_test_1) {
    
    TimeDelta a = hours(hrs) + minutes(min) + seconds(sec);
    CK_EQUAL(a.totalSeconds(), totalSeconds(hrs, min, sec));
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), 
+            math::kEpsilon);
 }
 
 TEST_CASE(TimeDelta_test_2) {
@@ -53,7 +54,8 @@ TEST_CASE(TimeDelta_test_2) {
    
    TimeDelta a = hours(hrs) + minutes(min) + seconds(sec);
    CK_EQUAL(a.totalSeconds(), totalSeconds(hrs, min, sec));
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), 
+            math::kEpsilon);
 }
 
 TEST_CASE(TimeDelta_test_2B) {
@@ -63,7 +65,8 @@ TEST_CASE(TimeDelta_test_2B) {
    
    TimeDelta a(hrs, min, sec);
    CK_EQUAL(a.totalSeconds(), totalSeconds(hrs, min, sec));
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec), 
+            math::kEpsilon);
 }
 
 TEST_CASE(TimeDelta_test_2C) {
@@ -74,7 +77,8 @@ TEST_CASE(TimeDelta_test_2C) {
    
    TimeDelta a(hrs, min, sec);
    a += milliseconds(msec);
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs,min,sec,msec), Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs,min,sec,msec),  
+            math::kEpsilon);
 }
 
 TEST_CASE(TimeDelta_test_3) {
@@ -91,8 +95,8 @@ TEST_CASE(TimeDelta_test_3) {
    a += milliseconds(msec);
    a += microseconds(Msec);
    a += nanoseconds(nsec);
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec, nsec),
-            Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() -
+            totalSecondsDbl(hrs, min, sec, msec, Msec, nsec), math::kEpsilon);
 }
 
 TEST_CASE(TimeDelta_test_3b) {
@@ -111,8 +115,8 @@ TEST_CASE(TimeDelta_test_3b) {
                  milliseconds(msec) +
                  microseconds(Msec) +
                  nanoseconds(nsec);
-   CK_SMALL(a.totalSecondsDbl() - totalSecondsDbl(hrs, min, sec, msec, Msec, nsec),
-            Math::kEpsilon);
+   CK_SMALL(a.totalSecondsDbl() -
+            totalSecondsDbl(hrs, min, sec, msec, Msec, nsec), math::kEpsilon);
 }
 
 SUITE_END();
