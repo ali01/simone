@@ -12,11 +12,10 @@
 
 namespace Simone {
 
-template <typename Notifier,
-       typename ChildNotifiee=class Notifier::Notifiee>
-class BaseNotifiee
- : public thread::ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
-   private boost::noncopyable {
+template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
+class BaseNotifiee :
+  public thread::ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
+  private boost::noncopyable {
 protected:
   BaseNotifiee() : strongly_ref_(true) {}
   virtual ~BaseNotifiee() {
@@ -27,7 +26,7 @@ protected:
   }
 
   typename Notifier::Ptr notifier_;
-  bool              strongly_ref_;
+  bool strongly_ref_;
 
 public:
 
