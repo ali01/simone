@@ -119,7 +119,9 @@ public:
    class Task : public BaseNotifiee<Activity,Task> {
       friend class Activity;
    protected:
-      Task() : next_time_(Time::kNull), scheduling_mode_(Activity::config::kDefault) {
+      Task() :
+        next_time_(Time::kNull), scheduling_mode_(Activity::config::kDefault)
+      {
          stronglyReferencingIs(false);
       }
       
@@ -217,8 +219,8 @@ public:
       ScopedLock lk(this->mutex());
       ScopedLock queue_lock(run_queue_.mutex());
       Activity *me = const_cast<Activity*>(this);
-      ConcurrentPriorityQueue<Task::Ptr,lt_TaskPtr>::iterator it =
-                                                               me->run_queue_.begin();
+      ConcurrentPriorityQueue<Task::Ptr,lt_TaskPtr>::iterator it;
+      it = me->run_queue_.begin();
       for(; it != run_queue_.end(); ++it) { if (_n == *it) break; }
       if (it != run_queue_.end()) {
          me->run_queue_.elementDel(it);
@@ -242,6 +244,7 @@ public:
    
    // notification support -----------------------------------------------------------
    void notifieeIs(Notifiee::Ptr _n) const {
+      // TODO: what if _n is NULL?
       ScopedLock lk(this->mutex());
       Activity *me = const_cast<Activity*>(this);
       me->notifiees_.elementIs(_n);
