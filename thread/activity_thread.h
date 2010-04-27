@@ -42,7 +42,8 @@ private:
    class RunnableActivity {
    public:      
       RunnableActivity(Activity::Ptr _a) : activity_(_a) {
-         if (activity_ == NULL) throw NullPointerException(__FILE__, __LINE__, "null activity");
+         if (activity_ == NULL)
+           throw NullPointerException(__FILE__, __LINE__, "null activity");
       }
       
       Activity::Ptr activity() const { return activity_; }
