@@ -10,7 +10,7 @@
 #include <boost/thread/condition.hpp>
 
 #include "../time.h"
-#include "../notifiee.h"
+#include "../base_notifiee.h"
 #include "../exception.h"
 #include "../utility.h"
 #include "../numeric.h"
