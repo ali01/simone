@@ -5,12 +5,14 @@
 // #include "../time/time.h"
 
 namespace Simone {
-   /* forward declaration */ class TimeDelta;
+
+/* forward declaration */
+class TimeDelta;
+
 namespace thread {
 
 struct this_thread {
    static void sleep(const TimeDelta& _t);
-   
    static boost::thread::id id() { return boost::this_thread::get_id(); }
 };
 

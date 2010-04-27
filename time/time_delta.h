@@ -26,7 +26,7 @@ public:
    }
    
    TimeDelta(long _hrs, long _min, long _sec, long _fractional=0) :
-                                              delta_(_hrs, _min, _sec, _fractional) {}
+      delta_(_hrs, _min, _sec, _fractional) {}
    TimeDelta(const TimeDelta& rhs) : delta_(rhs.delta_.hours(),
                                             rhs.delta_.minutes(),
                                             rhs.delta_.seconds(),
@@ -40,7 +40,7 @@ public:
       double fract   = delta_.fractional_seconds() / pow(10.0, res);
       return sec_dbl + fract;
    }
-   // operators ======================================================================
+
    TimeDelta& operator=(const TimeDelta& rhs) {
       delta_ = rhs.delta_;
       return *this;
