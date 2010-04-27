@@ -26,6 +26,7 @@ Orientation::valueIs(short v) {
     string msg = "unexpected value in initialization of orientation";
     throw Simone::RangeException(__FILE__, __LINE__, msg);
   }
+  Simone::Nominal<Orientation,short>::valueIs(v);
 }
 
 } /* end of namespace Simone */
