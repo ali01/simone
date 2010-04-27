@@ -41,14 +41,16 @@ public:
   void notifierIs(const typename Notifier::Ptr& _n) {
     if (notifier_ == _n) { return; }
     if (notifier_) {
-      if ( ! stronglyReferencing()) { notifier_->newRef(); }
+      if ( ! stronglyReferencing())
+        notifier_->newRef();
       notifier_->notifieeDel(static_cast<ChildNotifiee*>(this));
       notifier_ = NULL;
     }
     if (_n) {
       notifier_ = _n;
       notifier_->notifieeIs(static_cast<ChildNotifiee*>(this));
-      if ( ! stronglyReferencing()) { notifier_->deleteRef(); }
+      if ( ! stronglyReferencing())
+        notifier_->deleteRef();
     }
   }
 
@@ -60,8 +62,10 @@ public:
     if(stronglyReferencing() == _s) { return; }
     strongly_ref_ = _s;
     if (notifier_) {
-      if (stronglyReferencing()) { notifier_->newRef();   }
-      else                { notifier_->deleteRef(); }
+      if (stronglyReferencing())
+        notifier_->newRef();
+      else
+        notifier_->deleteRef();
     }
   }
 };
