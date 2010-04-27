@@ -163,6 +163,7 @@ include $(wildcard $(TEST_DEPS))
 # todo: put in some script
 .gitignore:
 	@echo $(PROJECT)   >  $@
+	@echo $(TESTER)    >> $@
 	@echo 'sync.make'  >> $@
 	@echo 'xcode/'     >> $@
 	@echo '.DS_Store'  >> $@
