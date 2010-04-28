@@ -18,7 +18,7 @@ public:
    }
 
    virtual RecursiveMutex& mutex() const {
-      return this->mutex();
+      return ConcurrentPtrInterface<ConcurrentCollectionElement>::mutex();
    }
 protected:
    ConcurrentCollectionElement() {}

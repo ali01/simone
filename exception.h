@@ -125,6 +125,12 @@ public:
 
 };
 
+class NetworkException : public Exception {
+public:
+   NetworkException(string filename, uint32_t line, string msg) :
+      Exception(filename, line, msg) {}
+};
+
 class InvalidFormattingException: public Exception {
 public:
    InvalidFormattingException(string filename, uint32_t line, string msg) :
