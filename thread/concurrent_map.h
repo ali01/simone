@@ -13,9 +13,7 @@ using std::less;
 
 namespace Simone {
 
-template <typename KeyType,
-       typename ValueType,
-       typename Cmp=less<KeyType> >
+template <typename KeyType, typename ValueType, typename Cmp=less<KeyType> >
 class ConcurrentMap : public ConcurrentCollection {
 public:
   typedef Simone::Ptr<const ConcurrentMap<KeyType,ValueType,Cmp> > PtrConst;
