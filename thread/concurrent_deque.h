@@ -9,7 +9,6 @@ using std::deque;
 #include "concurrent_collection.h"
 
 namespace Simone {
-namespace thread {
 
 template <typename T>
 class ConcurrentDeque : public ConcurrentCollection {
@@ -168,5 +167,4 @@ public:
 };
 
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

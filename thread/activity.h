@@ -33,7 +33,6 @@ using std::binary_function;
    // timeSinceStart
 
 namespace Simone {
-namespace thread {
 
 /*     forward declaration     */ class ActivityManager;
 class Activity : public ConcurrentPtrInterface<Activity>,
@@ -334,5 +333,4 @@ private:
    boost::thread_group threads_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

@@ -9,7 +9,6 @@
 #include "lock.h"
 
 namespace Simone {
-namespace thread {
 
 /* forward declarations */
 class RecursiveMutex;
@@ -27,5 +26,4 @@ protected:
    bool owns_lock_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

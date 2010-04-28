@@ -14,7 +14,7 @@
 #include "activity.h"
 
 namespace Simone {
-namespace thread {
+
 // todo: unspecialize
 class ActivityManager : public ConcurrentMap<string,Activity::Ptr> {
    friend class Activity;
@@ -138,6 +138,4 @@ inline void ActivityManager::activityDel(const string& name) {
    this->elementDel(name);
 }
 
-
-} /* end of namespace thread */
 } /* end of namespoce Simone */

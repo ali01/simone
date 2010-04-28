@@ -9,12 +9,9 @@ namespace Simone {
 /* forward declaration */
 class TimeDelta;
 
-namespace thread {
-
 struct this_thread {
    static void sleep(const TimeDelta& _t);
    static boost::thread::id id() { return boost::this_thread::get_id(); }
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

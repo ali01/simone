@@ -19,7 +19,6 @@ using std::deque;
 using std::less;
 
 namespace Simone {
-namespace thread {
 
 // TODO: support other operations
 template <typename T,
@@ -114,5 +113,4 @@ private:
    priority_queue<T,deque<T>,Compare> queue_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

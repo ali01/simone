@@ -12,7 +12,6 @@
 #include "../ptr_interface.h"
 
 namespace Simone {
-namespace thread {
 
 template <typename T>
 class ConcurrentPtrInterface : public Simone::PtrInterface<T> {
@@ -55,5 +54,4 @@ private:
    mutable RecursiveMutex mutex_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

@@ -11,7 +11,6 @@ using std::vector;
 #include "../exception.h"
 
 namespace Simone {
-namespace thread {
 
 // v0.1
 class RecursiveMutex : boost::noncopyable {
@@ -94,5 +93,4 @@ private:
    mutable recursive_mutex_t *mutex_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

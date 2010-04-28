@@ -4,7 +4,6 @@
 #include "recursive_mutex.h"
 
 namespace Simone {
-namespace thread {
 
 ScopedLock::ScopedLock(RecursiveMutex& _l) : mutex_(&_l), owns_lock_(true) {
    if (mutex_) {
@@ -45,5 +44,4 @@ void ScopedLock::unlock() {
    owns_lock_ = false;
 }
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

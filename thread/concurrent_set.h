@@ -15,7 +15,6 @@ using std::allocator;
 #include "concurrent_collection.h"
 
 namespace Simone {
-namespace thread {
 
 template <typename T,
           typename Compare=less<T>,
@@ -132,6 +131,4 @@ private:
 };
 
 
-
-} /* end of namespace thread */
 } /* end of namespace Simone */

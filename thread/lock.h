@@ -3,7 +3,6 @@
 #pragma once
 
 namespace Simone {
-namespace thread {
 
 template <typename BoostLockType>
 class lock {
@@ -12,5 +11,4 @@ protected:
    virtual ~lock() {}
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

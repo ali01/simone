@@ -11,7 +11,5 @@
 #include <boost/thread/thread.hpp>
 
 namespace Simone {
-namespace thread {
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

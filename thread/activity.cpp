@@ -6,7 +6,6 @@
 #include "../exception.h"
 
 namespace Simone {
-namespace thread {
 
 void Activity::runActivity() {
    runStatusIs(status::kRunning);
@@ -81,5 +80,4 @@ Time Activity::absoluteTime(const Time& _time) const {
    return _time + delta;
 }
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

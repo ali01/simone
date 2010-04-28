@@ -12,7 +12,6 @@ using std::less;
 #include "concurrent_collection.h"
 
 namespace Simone {
-namespace thread {
 
 template <typename KeyType,
        typename ValueType,
@@ -127,5 +126,4 @@ private:
   map<KeyType,ValueType,Cmp> map_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

@@ -6,7 +6,6 @@
 #include "scoped_lock.h"
 
 namespace Simone {
-namespace thread {
 
 class ConcurrentCollectionElement  {
 public:
@@ -27,5 +26,4 @@ private:
    mutable RecursiveMutex mutex_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

@@ -4,7 +4,7 @@
 #include "../../ptr_interface.h"
 
 using namespace Simone;
-using namespace Simone::thread;
+using namespace Simone;
 
 namespace SimoneTest {
 

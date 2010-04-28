@@ -11,7 +11,6 @@
 #include <boost/thread/thread.hpp>
 
 namespace Simone {
-namespace thread {
 
 class ActivityThread : public PtrInterface<ActivityThread>, boost::noncopyable {
 public:
@@ -60,5 +59,4 @@ private:
    boost::thread     thread_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */

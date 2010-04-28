@@ -10,7 +10,6 @@
 #include "scoped_lock.h"
 
 namespace Simone {
-namespace thread {
 
 class ConcurrentCollection : public ConcurrentPtrInterface<ConcurrentCollection>,
                              private boost::noncopyable {
@@ -27,7 +26,6 @@ protected:
    mutable RecursiveMutex mutex_;
 };
 
-} /* end of namespace thread */
 } /* end of namespace Simone */
 
 // concurrency ====================================================================

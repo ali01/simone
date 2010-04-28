@@ -14,7 +14,7 @@ namespace Simone {
 
 template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
 class BaseNotifiee :
-  public thread::ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
+  public ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
   private boost::noncopyable {
 protected:
   BaseNotifiee() : strongly_ref_(true) {}
