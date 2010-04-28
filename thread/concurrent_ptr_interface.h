@@ -41,11 +41,7 @@ public:
    virtual RecursiveMutex& mutex() const {
       return mutex_;
    }
-   
-   template <typename Collection> // enable use with Simone::ConcurrentCollection
-   void collectionIs(Collection *_c) const {
-      mutex().parentMutexIs(_c->mutex());
-   }
+
 protected:
    ConcurrentPtrInterface() {}
    virtual ~ConcurrentPtrInterface() { ScopedLock lk(this->mutex()); }

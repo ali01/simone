@@ -2,28 +2,29 @@
 
 #pragma once
 
+#include "concurrent_ptr_interface.h"
 #include "recursive_mutex.h"
 #include "scoped_lock.h"
 
 namespace Simone {
 
-class ConcurrentCollectionElement  {
+class ConcurrentCollectionElement :
+  public ConcurrentPtrInterface<ConcurrentCollectionElement>
+{
 public:
    template <typename Collection>
    void collectionIs(Collection *_c) const {
-      mutex().parentMutexIs(_c->mutex());
+      this->mutex().parentMutexIs(_c->mutex());
    }
-   
+
    virtual RecursiveMutex& mutex() const {
-      return mutex_;
+      return this->mutex();
    }
 protected:
    ConcurrentCollectionElement() {}
    virtual ~ConcurrentCollectionElement() {
       ScopedLock lk(this->mutex());
    }
-private:
-   mutable RecursiveMutex mutex_;
 };
 
 } /* end of namespace Simone */
