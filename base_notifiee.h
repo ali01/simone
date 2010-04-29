@@ -5,8 +5,8 @@
 #ifndef BASENOTIFIEE_H_SZV7FZSO
 #define BASENOTIFIEE_H_SZV7FZSO
 
-#include "utility.h"
 #include "exception.h"
+#include "utility.h"
 
 #include "thread/concurrent_ptr_interface.h"
 
