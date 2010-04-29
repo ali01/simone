@@ -80,7 +80,6 @@ public:
   }
   
   void elementIs(const KeyT& _key, const ValueT& _v) {
-    _v.collectionIs(this);
     map_[_key] = _v;
   }
   
