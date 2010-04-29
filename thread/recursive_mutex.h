@@ -58,8 +58,8 @@ public:
       scoped_lock_t lk(*mutex_);
       return lock_count_;
    }
-private:
-   
+
+private: 
    void mutex_is(const RecursiveMutex& o) {
       delete_mutex();
       mutex_ = o.mutex_;
@@ -69,7 +69,7 @@ private:
       mutex_->lock();
       if (owns_mutex_) {
          mutex_->unlock();
-         // delete mutex_;
+         delete mutex_;
          owns_mutex_ = false; // mutex cannot be reinitialized
       } else { mutex_->unlock(); }
       mutex_ = NULL;
