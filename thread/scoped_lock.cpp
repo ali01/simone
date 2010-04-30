@@ -9,10 +9,8 @@ ScopedLock::ScopedLock(RecursiveMutex& _l) : mutex_(&_l), owns_lock_(true) {
    if (mutex_) {
       mutex_->lock();
    } else {
-      stringstream ss;
-      cerr << __FILE__ << ":" << __LINE__ << endl;
-      ss << "null pointer passed to ScopedLock's constructor";
-      throw NullPointerException(__FILE__, __LINE__, ss.str());
+      string msg = "null pointer passed to ScopedLock's constructor";
+      throw NullPointerException(__FILE__, __LINE__, msg);
    }
 }
 
