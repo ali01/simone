@@ -3,7 +3,11 @@ LIBS += $(VOL_LIBRARY_PATH)/libboost_thread.a
 endif
 
 ifeq ($(OSTYPE),Linux)
+ifneq ($(strip $(wildcard .pod)),)
+LIBS += /afs/ir.stanford.edu/users/a/l/ali01/Public/include/boost-trunk/stage/lib/libboost_thread.so
+else
 LIBS += /usr/lib/libboost_thread-mt.so
+endif
 endif
 
 DIR_PRNZS0KG := simone/thread
