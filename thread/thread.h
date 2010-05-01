@@ -3,13 +3,8 @@
 #pragma once
 
 #include "this_thread.h"
-#include "activity_manager.h"
-#include "activity_thread.h"
-#include "activity.h"
-
-#ifdef __DEBUG__
-#include <boost/thread/recursive_mutex.hpp>
-#endif
+#include "scoped_lock.h"
+#include "recursive_mutex.h"
 
 namespace Simone {
 

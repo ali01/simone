@@ -18,4 +18,3 @@ TEST_CASE(_1) {
 SUITE_END();
 
 } /* end of namespace SimoneTest */
-
