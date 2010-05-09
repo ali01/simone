@@ -1,0 +1,10 @@
+DIR_U2TUXJ5E := simone/database
+SUB_U2TUXJ5E := 
+
+SRCS += $(wildcard $(DIR_U2TUXJ5E)/*.$(EXT))
+
+MK_U2TUXJ5E := $(foreach sdir,$(SUB_U2TUXJ5E),$(wildcard $(DIR_U2TUXJ5E)/$(sdir)/*.$(SUBDIR_EXT)))
+ifneq ($(MK_U2TUXJ5E),)
+$(info -- including subdirectory makefiles ($(DIR_U2TUXJ5E)): $(MK_U2TUXJ5E)) 
+include $(MK_U2TUXJ5E)
+endif
