@@ -1,6 +1,8 @@
 DIR_U2TUXJ5E := simone/database
 SUB_U2TUXJ5E := 
 
+LIBS += -lsqlite3
+
 SRCS += $(wildcard $(DIR_U2TUXJ5E)/*.$(EXT))
 
 MK_U2TUXJ5E := $(foreach sdir,$(SUB_U2TUXJ5E),$(wildcard $(DIR_U2TUXJ5E)/$(sdir)/*.$(SUBDIR_EXT)))
