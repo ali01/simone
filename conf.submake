@@ -1,8 +1,7 @@
 DIR_73K3LKB5 := simone
-SUB_73K3LKB5 += thread
-SUB_73K3LKB5 += network
-SUB_73K3LKB5 += time
-SUB_73K3LKB5 += spatial
+SUB_73K3LKB5 :=
+# to avoid compilation overhead, subdirectories should be added as needed in
+# conf.make file of including project
 
 SRCS += $(wildcard $(DIR_73K3LKB5)/*.$(EXT))
 
