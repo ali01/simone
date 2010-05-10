@@ -15,16 +15,15 @@ namespace Simone {
 class Path : public PtrInterface<Path> {
 public:
   typedef Simone::Ptr<const Path> PtrConst;
-  typedef Simone::Ptr<Path> Ptr;
   
-  static Ptr PathNew(const string& path) {
-    return new Path(path);
+  static PtrConst PathNew(const string& _path_str) {
+    return new Path(_path_str);
   }
   
   const std::string& str() const { return path_.string(); }
 
 private:
-  Path(const string& path) : path_(path, boost::filesystem::native) {}
+  Path(const string& _path_str) : path_(_path_str, boost::filesystem::native) {}
   
   /* data members */
   boost::filesystem::path path_;
