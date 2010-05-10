@@ -177,4 +177,38 @@ SQLiteDB::Query::Query(sqlite3 *_db, const string& _q) {
   }
 }
 
+void
+SQLiteDB::Query::execute() {
+  int ret;
+
+  do {
+    ret = sqlite3_step(stmt_);
+  } while (ret == SQLITE_ROW);
+
+  if (ret != SQLITE_DONE) {
+    string msg = "error executing sqlite query";
+    throw StorageException(__FILE__, __LINE__, msg);
+  }
+}
+
+SQLiteDB::Row::PtrConst
+SQLiteDB::Query::executeStep() {  
+  int ret = sqlite3_step(stmt_);
+
+  if (ret == SQLITE_ROW) {
+    if (row_ == NULL)
+      row_ = new Row(this);
+  } else if (ret == SQLITE_DONE) {
+    if (row_ != NULL) {
+      row_->validIs(false);
+      row_ = NULL;
+    }  
+  } else {
+    string msg = "error executing sqlite query";
+    throw StorageException(__FILE__, __LINE__, msg);
+  }
+
+  return row_;
+}
+
 } /* end of namespace S */

@@ -19,9 +19,10 @@ public:
 
   /* nested class table row */
   class Row: public Simone::PtrInterface<Row> {
-    friend class SQLiteDB;
+    friend class Query;
   public:
     typedef Simone::Ptr<const Row> PtrConst;
+    typedef Simone::Ptr<Row> Ptr;
 
     enum ValueType { kInteger, kFloat, kText, kBlob, kNull };
 
@@ -62,11 +63,18 @@ public:
     typedef Simone::Ptr<const Query> PtrConst;
     typedef Simone::Ptr<Query> Ptr;
 
+    void execute();
+    Row::PtrConst executeStep();
+
   private:
     Query(sqlite3 *_db, const string& _query);
 
     /* data members */
+
     sqlite3_stmt *stmt_;
+    
+    /* result table row */
+    Row::Ptr row_;
   };
 
   static Ptr SQLiteDBNew(const string& _db_name) {
