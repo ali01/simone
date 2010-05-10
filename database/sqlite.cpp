@@ -1,4 +1,4 @@
-#include "sqlite_db.h"
+#include "sqlite.h"
 
 /* lib includes */
 #include <stdint.h>
