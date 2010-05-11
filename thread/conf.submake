@@ -1,5 +1,5 @@
 ifeq ($(OSTYPE),Darwin)
-LIBS += $(VOL_LIBRARY_PATH)/libboost_thread.a
+LIBS += -lboost_thread
 endif
 
 ifeq ($(OSTYPE),Linux)
