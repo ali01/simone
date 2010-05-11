@@ -1,5 +1,5 @@
 ifeq ($(OSTYPE),Darwin)
-LIBS += -lboost_thread
+LIBS += -lboost_thread-mt
 endif
 
 ifeq ($(OSTYPE),Linux)
