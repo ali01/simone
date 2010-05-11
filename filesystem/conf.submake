@@ -3,7 +3,7 @@ SUB_O92OI70J :=
 
 SRCS += $(wildcard $(DIR_O92OI70J)/*.$(EXT))
 
-LIBS += -lboost_filesystem
+LIBS += -lboost_filesystem-mt-d -lboost_system-mt-d
 
 MK_O92OI70J := $(foreach sdir,$(SUB_O92OI70J),$(wildcard $(DIR_O92OI70J)/$(sdir)/*.$(SUBDIR_EXT)))
 ifneq ($(MK_O92OI70J),)
