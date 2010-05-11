@@ -5,7 +5,7 @@
 #include <string>
 
 /* boost includes */
-#include <boost/filesytem/path.hpp>
+#include <boost/filesystem/path.hpp>
 
 /* simone includes */
 #include "../ptr_interface.h"
@@ -21,6 +21,7 @@ public:
   }
   
   const std::string& str() const { return path_.string(); }
+  const char *c_str() const { return str().c_str(); }
 
 private:
   Path(const string& _path_str) : path_(_path_str, boost::filesystem::native) {}

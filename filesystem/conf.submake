@@ -3,6 +3,8 @@ SUB_O92OI70J :=
 
 SRCS += $(wildcard $(DIR_O92OI70J)/*.$(EXT))
 
+LIBS += -lboost_filesystem
+
 MK_O92OI70J := $(foreach sdir,$(SUB_O92OI70J),$(wildcard $(DIR_O92OI70J)/$(sdir)/*.$(SUBDIR_EXT)))
 ifneq ($(MK_O92OI70J),)
 $(info -- including subdirectory makefiles ($(DIR_O92OI70J)): $(MK_O92OI70J)) 
