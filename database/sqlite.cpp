@@ -9,10 +9,11 @@ using std::string;
 
 /* simone includes */
 #include "../exception.h"
+#include "../filesystem/path.h"
 
 namespace Simone {
 
-SQLiteDB::SQLiteDB(const string& _db_name) {
+SQLiteDB::SQLiteDB(Path::PtrConst _db_path) {
   /* - OPEN_CREATE creates database if it doesn't already exist;
      - OPEN_NOMUTEX allows multithreaded access to database as long as any
                     single sqlite3* abject is always accessed by one thread; */
@@ -20,7 +21,7 @@ SQLiteDB::SQLiteDB(const string& _db_name) {
               SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX;
 
   /* initialize database using open_v2(); open() is deprecated */
-  int ret = sqlite3_open_v2(_db_name.c_str(), &db_, flags, NULL);
+  int ret = sqlite3_open_v2(_db_path->c_str(), &db_, flags, NULL);
   if (ret != SQLITE_OK) {
     string msg = sqlite3_errmsg(db_);
     throw StorageException(__FILE__, __LINE__, msg);

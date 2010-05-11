@@ -6,6 +6,7 @@
 
 /* simone includes */
 #include "../ptr_interface.h"
+#include "../filesystem/path.h"
 
 namespace Simone {
 
@@ -77,8 +78,8 @@ public:
     Row::Ptr row_;
   };
 
-  static Ptr SQLiteDBNew(const string& _db_name) {
-    return new SQLiteDB(_db_name);
+  static Ptr SQLiteDBNew(Path::PtrConst _db_path) {
+    return new SQLiteDB(_db_path);
   }
 
   Query::PtrConst query(const string & _query) const {
@@ -86,7 +87,7 @@ public:
   }
 
 private:
-  SQLiteDB(const string& _db_name);
+  SQLiteDB(Path::PtrConst _db_path);
   virtual ~SQLiteDB();
 
   /* data members */
