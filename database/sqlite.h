@@ -82,7 +82,7 @@ public:
     return new SQLiteDB(_db_path);
   }
 
-  Query::PtrConst query(const string & _query) const {
+  Query::Ptr query(const string & _query) const {
     return new Query(db_, _query);
   }
 
