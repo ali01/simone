@@ -1,0 +1,10 @@
+DIR_KHCKLLZ6 := simone/crypt
+SUB_KHCKLLZ6 := 
+
+SRCS += $(wildcard $(DIR_KHCKLLZ6)/*.$(EXT))
+
+MK_KHCKLLZ6 := $(foreach sdir,$(SUB_KHCKLLZ6),$(wildcard $(DIR_KHCKLLZ6)/$(sdir)/*.$(SUBDIR_EXT)))
+ifneq ($(MK_KHCKLLZ6),)
+$(info -- including subdirectory makefiles ($(DIR_KHCKLLZ6)): $(MK_KHCKLLZ6)) 
+include $(MK_KHCKLLZ6)
+endif
