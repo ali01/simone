@@ -56,8 +56,8 @@ public:
    }
 
    /* functor support */
-   template <typename T>
-   void operator()(T *t) {
+   template <typename TT>
+   void operator()(TT *t) {
      t->operator()(ptr_);
    }
 
