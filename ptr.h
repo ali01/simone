@@ -55,7 +55,14 @@ public:
       return ptr_ ? &PointerConversion::valid : 0;
    }
 
-   template <typename Collection> // enable use with Simone::ConcurrentCollection
+   /* functor support */
+   template <typename T>
+   void operator()(T *t) {
+     t->operator()(ptr_);
+   }
+
+   /* enable use with Simone::ConcurrentCollection */
+   template <typename Collection> 
    void collectionIs(Collection *_c) const {
       ptr_->collectionIs(_c);
    }
