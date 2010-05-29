@@ -57,8 +57,8 @@ public:
 
    /* functor support */
    template <typename TT>
-   void operator()(TT *t) {
-     t->operator()(ptr_);
+   void operator()(TT t) {
+     ptr_->operator()(t);
    }
 
    /* enable use with Simone::ConcurrentCollection */
