@@ -16,14 +16,16 @@ using std::stringstream;
 
 namespace Simone {
 
-/* forward declaration */ class AddressIPv4;
+/* forward declaration */
+class AddressIPv4;
+
 class SubnetMaskIPv4 : public Ordinal<SubnetMaskIPv4,uint32_t> {
    friend class AddressIPv4;
 public:
    // TODO: consider converting to SubnetMaskIPv4 object
    SubnetMaskIPv4(uint32_t _v=kMax) : Ordinal<SubnetMaskIPv4,uint32_t>(_v) {}
-   SubnetMaskIPv4(const SubnetMaskIPv4& _sm) :
-                                 Ordinal<SubnetMaskIPv4,uint32_t>(_sm.value()) {}
+   SubnetMaskIPv4(const SubnetMaskIPv4& _sm)
+      : Ordinal<SubnetMaskIPv4,uint32_t>(_sm.value()) {}
    
    SubnetMaskIPv4 operator&(const AddressIPv4& _addr) const;
       
@@ -35,14 +37,15 @@ private:
    static const uint32_t kMax = 0xFFFFFFFF;
 };
 
+
 class AddressIPv4 : public Ordinal<AddressIPv4,uint32_t> {
    friend class SubnetMaskIPv4;
 public:
    static const AddressIPv4 kZero;
    
    explicit AddressIPv4(uint32_t _a) : Ordinal<AddressIPv4,uint32_t>(_a) {}
-   AddressIPv4(uint32_t _a, uint32_t _mask) : Ordinal<AddressIPv4,uint32_t>(_a),
-                                              subnet_mask_(_mask) {}
+   AddressIPv4(uint32_t _a, uint32_t _mask)
+      : Ordinal<AddressIPv4,uint32_t>(_a), subnet_mask_(_mask) {}
    AddressIPv4(const AddressIPv4& _addr)
       : Ordinal<AddressIPv4,uint32_t>(_addr.value_),
         subnet_mask_(_addr.subnetMask()) {}
@@ -112,7 +115,8 @@ private:
    SubnetMaskIPv4 subnet_mask_;
 };
 
-inline SubnetMaskIPv4 SubnetMaskIPv4::operator&(const AddressIPv4& _addr) const {
+inline SubnetMaskIPv4
+SubnetMaskIPv4::operator&(const AddressIPv4& _addr) const {
    AddressIPv4 addr = _addr & *this;
    return addr.value();
 }
