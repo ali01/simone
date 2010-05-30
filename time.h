@@ -18,7 +18,7 @@ class Time
    : private boost::less_than_comparable<Time,boost::equality_comparable<Time> > {
 public:
    enum SpecialValue { kNow, kInfinity, kNegInfinity, kMax, kMin, kNull };
-   
+
    explicit Time(Clock::Type _type) {
       switch (_type) {
          case Clock::kSecondLocal:
@@ -33,11 +33,15 @@ public:
          case Clock::kMicrosecUniversal:
             ptime_ = boost::posix_time::microsec_clock::universal_time();
             break;
-         default: throw AttributeNotSupportedException(__FILE__, __LINE__, "clock_type unknown");
+         default:
+            {
+               string msg = "clock_type unknown";
+               throw AttributeNotSupportedException(__FILE__, __LINE__, msg);
+            }
       }
    }
-   
-   explicit Time(SpecialValue _v=kNull) {
+
+   explicit Time(SpecialValue _v=kNow) {
       switch (_v) {
          case kNow:
             ptime_ = boost::posix_time::microsec_clock::universal_time();
@@ -55,50 +59,54 @@ public:
             ptime_ = boost::posix_time::ptime(boost::date_time::min_date_time);
             break;
          case kNull:
-            ptime_ = boost::posix_time::ptime(boost::date_time::not_a_date_time);
+            ptime_ =
+              boost::posix_time::ptime(boost::date_time::not_a_date_time);
             break;
-         default: throw AttributeNotSupportedException(__FILE__, __LINE__, "special_value unknown");
+         default:
+            {
+                string msg = "special_value unknown";
+                throw AttributeNotSupportedException(__FILE__, __LINE__, msg);
+            }
       }
    }
-   
+
    Time(const Time& _o) : ptime_(_o.ptime_) {}
-   
-   // operators ======================================================================
+
    Time& operator=(const Time& rhs) {
       ptime_ = rhs.ptime_;
       return *this;
    }
-   
+
    bool operator==(const Time& rhs) const {
       return ptime_ == rhs.ptime_;
    }
-   
+
    bool operator<(const Time& rhs) const {
       return ptime_ < rhs.ptime_;
    }
-   
+
    TimeDelta operator-(const Time& rhs) const {
       return ptime_ - rhs.ptime_;
    }
-   
+
    Time operator+(const TimeDelta& td) const {
       return ptime_ + td.delta_;
    }
-   
+
    Time operator-(const TimeDelta& td) const {
       return ptime_ - td.delta_;
    }
-   
+
    Time& operator+=(const TimeDelta& td) {
       ptime_ += td.delta_;
       return *this;
    }
-   
+
    Time& operator-=(const TimeDelta& td)  {
       ptime_ -= td.delta_;
       return *this;
    }
-   
+
    boost::posix_time::ptime ptime() { return ptime_; }
 private:
    Time(boost::posix_time::ptime _rhs) : ptime_(_rhs) {}
