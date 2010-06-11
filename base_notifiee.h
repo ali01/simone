@@ -5,16 +5,15 @@
 #ifndef BASENOTIFIEE_H_SZV7FZSO
 #define BASENOTIFIEE_H_SZV7FZSO
 
+#include "ptr_interface.h"
 #include "exception.h"
 #include "utility.h"
-
-#include "thread/concurrent_ptr_interface.h"
 
 namespace Simone {
 
 template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
 class BaseNotifiee :
-  public ConcurrentPtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
+  public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
   private boost::noncopyable {
 protected:
   BaseNotifiee() : strongly_ref_(true) {}
