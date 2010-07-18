@@ -12,7 +12,7 @@ using std::vector;
 namespace Simone {
 
 template <typename T>
-class Vector : public PtrInterface<Vector<T> >, boost::noncopyable {
+class Vector : public PtrInterface<Vector<T> > {
 public:
    // type declarations ========================================================
    typedef Simone::Ptr<const Vector<T> > PtrConst;
@@ -63,6 +63,10 @@ private:
    // member functions =========================================================
    // data members =============================================================
    vector<T> vector_;
+   
+   /* operations disallowed */
+   Vector(const Vector&);
+   void operator=(const Vector&);
 };
 
 } /* end of namespace Simone */
