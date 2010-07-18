@@ -9,10 +9,6 @@
 #include <utility>
 #include <iomanip>
 
-#include <boost/utility.hpp>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 #if defined(linux) || defined(__APPLE__)
 #include <stdint.h>
 #endif
@@ -39,9 +35,6 @@
    using std::stringstream;
    using std::ostringstream;
    using std::istringstream;
-
-   #include <boost/thread/recursive_mutex.hpp>
-   extern boost::recursive_mutex io_debug_mutex_;
 #else
    #define IF_DEBUG(stmt)
 #endif

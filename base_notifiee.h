@@ -13,8 +13,7 @@ namespace Simone {
 
 template <typename Notifier, typename ChildNotifiee=class Notifier::Notifiee>
 class BaseNotifiee :
-  public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee> >,
-  private boost::noncopyable {
+  public PtrInterface<BaseNotifiee<Notifier,ChildNotifiee> > {
 protected:
   BaseNotifiee() : strongly_ref_(true) {}
   virtual ~BaseNotifiee() {
@@ -67,6 +66,11 @@ public:
         notifier_->deleteRef();
     }
   }
+
+private:
+  /* operations disallowed */
+  BaseNotifiee(const BaseNotifiee&);
+  void operator=(const BaseNotifiee&);
 };
 
 } /* end of namespace Simone */
