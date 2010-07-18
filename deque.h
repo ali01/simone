@@ -10,7 +10,7 @@ using std::deque;
 namespace Simone {
 
 template <typename T>
-class Deque : public PtrInterface<Deque<T> >, boost::noncopyable {
+class Deque : public PtrInterface<Deque<T> > {
 public:
   typedef Simone::Ptr<const Deque<T> > PtrConst;
   typedef Simone::Ptr<Deque<T> > Ptr;
@@ -62,6 +62,10 @@ public:
 
 protected:
   deque<T> deque_;
+
+  /* disallowed operations */
+  Deque(const Deque&);
+  void operator=(const Deque&);
 };
 
 } /* end of namespace Simone */
