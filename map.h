@@ -12,7 +12,7 @@ using std::less;
 namespace Simone {
 
 template<typename KeyT,typename ValueT,typename Cmp=less<KeyT> >
-class Map : public PtrInterface<Map<KeyT,ValueT,Cmp> >, boost::noncopyable {
+class Map : public PtrInterface<Map<KeyT,ValueT,Cmp> > {
 public:
   typedef Simone::Ptr<const Map<KeyT,ValueT,Cmp> > PtrConst;
   typedef Simone::Ptr<Map<KeyT,ValueT,Cmp> > Ptr;
@@ -105,6 +105,10 @@ public:
 private:
   /* data members */
   map<KeyT,ValueT,Cmp> map_;
+  
+  /* operations disallowed */
+  Map(const Map&);
+  void operator=(const Map&);
 };
 
 } /* end of namespace Simone */

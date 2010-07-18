@@ -16,9 +16,7 @@ namespace Simone {
 template <typename T,
           typename Compare=less<T>,
           typename Allocator=allocator<T> >
-class Set :
-  public Simone::PtrInterface<Set<T,Compare,Allocator> >, boost::noncopyable
-{
+class Set : public Simone::PtrInterface<Set<T,Compare,Allocator> > {
 public:
   typedef Simone::Ptr<const Set<T,Compare,Allocator> > PtrConst;
   typedef Simone::Ptr<Set<T,Compare,Allocator> > Ptr;
@@ -101,6 +99,10 @@ public:
 private:
   /* data members */
   set<T,Compare,Allocator> set_;
+  
+  /* operations disallowed */
+  Set(const Set&);
+  void operator=(const Set&);
 };
 
 } /* end of namespace Simone */
