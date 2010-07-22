@@ -10,7 +10,9 @@ namespace Simone {
 template <typename T>
 class Ptr {
 public:
-  Ptr(T* p = 0) : ptr_(p) {
+  Ptr () : ptr_(0) {}
+  
+  Ptr(T* p) : ptr_(p) {
     if (ptr_)
       ptr_->newRef();
   }
