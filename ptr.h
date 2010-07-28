@@ -5,12 +5,14 @@
 #ifndef PTR_H_M10ZP6RI
 #define PTR_H_M10ZP6RI
 
+#include <cassert>
+
 namespace Simone {
 
 template <typename T>
 class Ptr {
 public:
-  Ptr () : ptr_(0) {}
+  Ptr () : ptr_(NULL) {}
   
   Ptr(T* p) : ptr_(p) {
     if (ptr_)
@@ -24,26 +26,41 @@ public:
 
   ~Ptr() {
     if (ptr_) {
-      if (ptr_->deleteRef() == 0)
-        ptr_ = 0;
+      if (ptr_->deleteRef() == NULL)
+        ptr_ = NULL;
     }
   }
 
-  Ptr<T>& operator=( const Ptr<T>& mp );
-  Ptr<T>& operator=( Ptr<T>& mp );
-  Ptr<T>& operator=( T* p );
+  Ptr<T>& operator=(const Ptr<T>& mp);
+  Ptr<T>& operator=(Ptr<T>& mp);
+  Ptr<T>& operator=(T* p);
 
-  bool operator==( const Ptr<T>& mp ) const { return ptr_ == mp.ptr_; }
-  bool operator!=( const Ptr<T>& mp ) const { return ptr_ != mp.ptr_; }
-  bool operator==( T* p ) const { return ptr_ == p; }
-  bool operator!=( T* p ) const { return ptr_ != p; }
+  bool operator==(const Ptr<T>& mp) const { return ptr_ == mp.ptr_; }
+  bool operator!=(const Ptr<T>& mp) const { return ptr_ != mp.ptr_; }
+  bool operator==(T* p) const { return ptr_ == p; }
+  bool operator!=(T* p) const { return ptr_ != p; }
   bool operator<(const Ptr<T>& mp) const { return ptr_ < mp.ptr_; }
 
-  const T& operator*() const { return *ptr_; }
-  T& operator*() { return *ptr_; }
+  const T& operator*() const {
+    assert(ptr_ != NULL);
+    return *ptr_;
+  }
 
-  const T * operator->() const { return ptr_; }
-  T * operator->() { return ptr_; }
+  T& operator*() {
+    assert(ptr_ != NULL);
+    return *ptr_;
+  }
+
+  const T * operator->() const {
+    assert(ptr_ != NULL);
+    return ptr_;
+  }
+
+  T * operator->() {
+    assert(ptr_ != NULL);
+    return ptr_;
+  }
+
   T * ptr() const { return ptr_; }
 
   template <class OtherType>
@@ -52,12 +69,6 @@ public:
   struct PointerConversion { int valid; };
   operator int PointerConversion::*() const {
     return ptr_ ? &PointerConversion::valid : 0;
-  }
-
-  /* enable use with Simone::ConcurrentCollection */
-  template <typename Collection> 
-  void collectionIs(Collection *_c) const {
-    ptr_->collectionIs(_c);
   }
 
   template <typename TargetS, typename SourceS>
@@ -75,29 +86,44 @@ protected:
 };
 
 template<class T> Ptr<T>&
-Ptr<T>::operator=( const Ptr<T>& mp ) {
+Ptr<T>::operator=(const Ptr<T>& mp) {
   const T * save = ptr_;
   ptr_ = mp.ptr_;
-  if( ptr_ ) ptr_->newRef();
-  if( save ) save->deleteRef();
+
+  if (ptr_)
+    ptr_->newRef();
+
+  if (save)
+    save->deleteRef();
+  
   return *this;
 }
 
 template<class T> Ptr<T>&
-Ptr<T>::operator=( Ptr<T>& mp ) {
+Ptr<T>::operator=(Ptr<T>& mp) {
   T * save = ptr_;
   ptr_ = mp.ptr_;
-  if( ptr_ ) ptr_->newRef();
-  if( save ) save->deleteRef();
+
+  if (ptr_)
+    ptr_->newRef();
+
+  if (save)
+    save->deleteRef();
+
   return *this;
 }
 
 template<class T> Ptr<T>&
-Ptr<T>::operator=( T* p ) {
+Ptr<T>::operator=(T* p) {
   T * save = ptr_;
   ptr_ = p;
-  if( ptr_ ) ptr_->newRef();
-  if( save ) save->deleteRef();
+
+  if (ptr_)
+    ptr_->newRef();
+
+  if (save)
+    save->deleteRef();
+
   return *this;
 }
 
