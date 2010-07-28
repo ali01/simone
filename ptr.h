@@ -24,7 +24,7 @@ public:
       ptr_->newRef();
   }
 
-  ~Ptr() {
+  virtual ~Ptr() {
     if (ptr_) {
       if (ptr_->deleteRef() == NULL)
         ptr_ = NULL;
