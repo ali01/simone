@@ -48,6 +48,7 @@ public:
   const T& back() const { return deque_.back(); }
 
   /* mutators */
+  // TODO: ensure deque is nonempty for pop operations
   iterator elementDel(iterator it) { return deque_.erase(it); }
   void elementIs(uint32_t _i, const T& _e) { deque_[_i] = _e; }
   void pushFront(const T& _e) { deque_.push_front(_e); }
