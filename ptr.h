@@ -8,7 +8,7 @@
 #include <cassert>
 
 namespace Simone {
-
+// TODO: add operator<<
 template <typename T>
 class Ptr {
 public:
@@ -63,22 +63,13 @@ public:
 
   T * ptr() const { return ptr_; }
 
+  /* cast operator -- other types */
   template <class OtherType>
   operator Ptr<OtherType>() const { return Ptr<OtherType>(ptr_); }
-
-  struct PointerConversion { int valid; };
-  operator int PointerConversion::*() const {
-    return ptr_ ? &PointerConversion::valid : 0;
-  }
 
   template <typename TargetS, typename SourceS>
   static Ptr<TargetS> st_cast(Ptr<SourceS> _o) {
     return static_cast<TargetS*>(_o.ptr());
-  }
-  
-  template <typename TargetD, typename SourceD>
-  static Ptr<TargetD> dyn_cast(Ptr<SourceD> _o) {
-    return dynamic_cast<TargetD*>(_o.ptr());
   }
 
 protected:
