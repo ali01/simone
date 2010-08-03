@@ -6,9 +6,13 @@
 #define PTR_H_M10ZP6RI
 
 #include <cassert>
+#include <iostream>
+#include <ios>
+using std::hex;
+using std::ostream;
 
 namespace Simone {
-// TODO: add operator<<
+
 template <typename T>
 class Ptr {
 public:
@@ -116,6 +120,15 @@ Ptr<T>::operator=(T* p) {
     save->deleteRef();
 
   return *this;
+}
+
+template<class T>
+ostream&
+operator<<(ostream& out, const Ptr<T>& _s) {
+  size_t size = 2 * sizeof(int*) + 4;
+  char buf[size];
+  snprintf(buf, size, "%p", _s.ptr());
+  return out << buf;
 }
 
 }
