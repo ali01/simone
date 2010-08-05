@@ -67,6 +67,11 @@ public:
 
   T * ptr() const { return ptr_; }
 
+  struct PointerConversion { bool valid; };
+  operator bool PointerConversion::*() const {
+    return (ptr_ != NULL) ? &PointerConversion::valid : false;
+  }
+
   /* cast operator -- other types */
   template <class OtherType>
   operator Ptr<OtherType>() const { return Ptr<OtherType>(ptr_); }
