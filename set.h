@@ -92,6 +92,11 @@ public:
     set_.insert(_v);
   }
 
+  template <typename input_iterator>
+  void insert(input_iterator first, input_iterator last) {
+    set_.insert(first, last);
+  }
+
   void elementDel(const T& _v) {
     set_.erase(_v);
   }
