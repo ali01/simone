@@ -73,7 +73,7 @@ public:
   }
 
   /* cast operator -- other types */
-  template <class OtherType>
+  template <typename OtherType>
   operator Ptr<OtherType>() const { return Ptr<OtherType>(ptr_); }
 
   template <typename TargetS, typename SourceS>
@@ -81,11 +81,18 @@ public:
     return static_cast<TargetS*>(_o.ptr());
   }
 
+  /* support for double dispatch */
+  template <typename Dispatchable>
+  void operator()(Dispatchable _t) const {
+    _t->self_apply(*this);
+  }
+
 protected:
   T *ptr_;
 };
 
-template<class T> Ptr<T>&
+template<class T>
+inline Ptr<T>&
 Ptr<T>::operator=(const Ptr<T>& mp) {
   const T * save = ptr_;
   ptr_ = mp.ptr_;
@@ -99,7 +106,8 @@ Ptr<T>::operator=(const Ptr<T>& mp) {
   return *this;
 }
 
-template<class T> Ptr<T>&
+template<class T>
+inline Ptr<T>&
 Ptr<T>::operator=(Ptr<T>& mp) {
   T * save = ptr_;
   ptr_ = mp.ptr_;
@@ -113,7 +121,8 @@ Ptr<T>::operator=(Ptr<T>& mp) {
   return *this;
 }
 
-template<class T> Ptr<T>&
+template<class T>
+inline Ptr<T>&
 Ptr<T>::operator=(T* p) {
   T * save = ptr_;
   ptr_ = p;
@@ -128,7 +137,7 @@ Ptr<T>::operator=(T* p) {
 }
 
 template<class T>
-ostream&
+inline ostream&
 operator<<(ostream& out, const Ptr<T>& _s) {
   size_t size = 2 * sizeof(int*) + 4;
   char buf[size];
